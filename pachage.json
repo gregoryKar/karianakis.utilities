@@ -1,0 +1,12 @@
+{
+    "name": "com.unity_utilities_gk",
+    "version": "1.0.0",
+    "displayName": "gk unity utilities",
+    "unity" : "6000.0.62f1" ,
+    "description" : "my basic utilities" ,
+    "author" : 
+    {
+        "name" : "blueFishCoder"
+    }
+
+}
