@@ -11,7 +11,11 @@ solving issues that are encountered in each use of the utilities and will lead t
 
 ## <!-- [NOT_URGENT] -->
 > <ID>
--       types - maybe for example enemies and friendly and neutral and menu ..
+-       σε ενοχλει που δεν μπορεις να κανεις απλα ενα id == other
+    τωρα πως ακριβως κανεις equations και γενικα πως πρεπει να 
+    χρησιμοποιειται κανε ενα manual χρησης
+-       types - maybe for example enemies and friendly and neutral
+    and menu ..
     option to kill all of certain type maybe?? ??
 
 > <INVO>
