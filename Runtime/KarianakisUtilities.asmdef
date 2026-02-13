@@ -1,4 +1,5 @@
 {
 	"name": "karianakis.utilities",
-	"rootNamespace": "Karianakis.Utilities"
+	"rootNamespace": "Karianakis.Utilities",
+	"autoReferenced": true
 }
