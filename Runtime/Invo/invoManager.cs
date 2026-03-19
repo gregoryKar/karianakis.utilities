@@ -27,7 +27,6 @@ namespace Karianakis.Utilities
                 }
                 return instForbidden;
             }
-
         }
 
         private List<InvoBase> _invokes = new();
@@ -53,8 +52,31 @@ namespace Karianakis.Utilities
                     }
                 }
             }
+
+#if UNITY_EDITOR && KARIANAKIS
+            
+            if(_displayedImTestingLog == false)
+            {
+                _displayedImTestingLog = true;
+                Debug.LogWarning($"init infinite invokes heap test");
+            }
+
+            _editHeapTestTimer += Time.deltaTime;
+            if(_editHeapTestTimer >= _editHeapTestInterval)
+            {
+                _editHeapTestTimer = 0f;
+                TestHeapValidity();
+            }
+#endif
+
         }
 
+        
+#if UNITY_EDITOR && KARIANAKIS
+bool _displayedImTestingLog;
+        float _editHeapTestTimer;
+        const float _editHeapTestInterval = .5f;
+#endif
 
 
         //? BASE FUNCTIONALITY
@@ -150,19 +172,7 @@ namespace Karianakis.Utilities
         }
 
 
-        void EditInitHeapTest()
-        {
 
-#if UNITY_EDITOR && KARIANAKIS
-            Debug.LogWarning($"init infinite invokes heap test");
-
-            Invo.Infinite(() =>
-             {
-                 TestHeapValidity();
-             }, 1f);
-#endif
-
-        }
         void TestHeapValidity()
         {
 
