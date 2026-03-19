@@ -32,22 +32,30 @@ namespace Karianakis.Utilities
             OvverideCurrentEndTime(startDelay);
             return this;
         }
-        public InvoBuilder SetEndAction(Action endAction)
-        {
-            SetEndActionInternal(endAction);
-            return this;
-        }
+
         public InvoBuilder SetId(MyId id)
         {
             SetIdInternal(id);
             return this;
         }
 
+
+        public InvoBuilder SetEndAction(Action endAction)
+        {
+            SetEndActionInternal(endAction);
+            return this;
+        }
         public InvoBuilder SetDeathAction(Action deathAction)
         {
             SetDeathActionInternal(deathAction);
             return this;
         }
-        
+        public InvoBuilder SetDeathOrEndAction(Action deathAction)
+        {
+            SetDeathActionInternal(deathAction);
+            SetEndActionInternal(deathAction);
+            return this;
+        }
+
     }
 }

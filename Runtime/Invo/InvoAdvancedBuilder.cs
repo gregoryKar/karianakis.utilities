@@ -24,14 +24,15 @@ namespace Karianakis.Utilities
             OvverideCurrentEndTime(startDelay);
             return this;
         }
-        public invoAdvancedBuilder SetEndAction(Action endAction)
-        {
-            SetEndActionInternal(endAction);
-            return this;
-        }
+
         public invoAdvancedBuilder SetId(MyId id)
         {
             SetIdInternal(id);
+            return this;
+        }
+        public invoAdvancedBuilder SetEndAction(Action endAction)
+        {
+            SetEndActionInternal(endAction);
             return this;
         }
         public invoAdvancedBuilder SetDeathAction(Action deathAction)
@@ -39,7 +40,13 @@ namespace Karianakis.Utilities
             SetDeathActionInternal(deathAction);
             return this;
         }
+        public invoAdvancedBuilder SetDeathOrEndAction(Action deathAction)
+        {
+            SetDeathActionInternal(deathAction);
+            SetEndActionInternal(deathAction);
+            return this;
+        }
 
-    
+
     }
 }

@@ -68,6 +68,7 @@ namespace Karianakis.Utilities
         internal void SetDeathActionInternal(Action deathAction)
             => _deathAction = deathAction;
 
+
         internal void Process()
         {
             _repeatsLeft--;
