@@ -22,7 +22,7 @@ namespace Karianakis.Utilities
 
 
         internal override void InvokeMe(InvoBase _me) => _action.Invoke();
-       
+
 
 
 
@@ -43,5 +43,11 @@ namespace Karianakis.Utilities
             return this;
         }
 
+        public InvoBuilder SetDeathAction(Action deathAction)
+        {
+            SetDeathActionInternal(deathAction);
+            return this;
+        }
+        
     }
 }

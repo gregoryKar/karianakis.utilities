@@ -10,7 +10,7 @@ using UnityEngine;
 namespace Karianakis.Utilities
 {
 
-    public abstract class InvoBase : IComparable<InvoBase> 
+    public abstract class InvoBase : IComparable<InvoBase>
     {
 
         MyId _id;
@@ -22,6 +22,7 @@ namespace Karianakis.Utilities
         bool _killMe;
 
         Action _endAction;
+        Action _deathAction;
 
         internal InvoBase(
            float delay,
@@ -64,6 +65,9 @@ namespace Karianakis.Utilities
         internal void SetEndActionInternal(Action endAction)
             => _endAction = endAction;
 
+        internal void SetDeathActionInternal(Action deathAction)
+            => _deathAction = deathAction;
+
         internal void Process()
         {
             _repeatsLeft--;
@@ -99,7 +103,12 @@ namespace Karianakis.Utilities
         /// time left
         /// <param name="delay"></param>
         public void SetDelay(float delay) => _delay = delay;
-        public void KillMe() => _killMe = true;
+        public void KillMe()
+        {
+            _killMe = true;
+            _deathAction?.Invoke();
+        }
+
 
         public int CompareTo(InvoBase other)
         {

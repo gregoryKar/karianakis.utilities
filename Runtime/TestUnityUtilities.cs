@@ -13,18 +13,41 @@ namespace Karianakis.Utilities
         private void Start()
         {
 
-            MyId father = new MyId();
-            MyKidFatherId kidFather = new MyKidFatherId(father);
+            /*
+                        MyId father = new MyId();
+                        MyKidFatherId kidFather = new MyKidFatherId(father);
 
-            Debug.Log(father.Overlaps(null)); //??? false
-            Debug.Log(father.Overlaps(kidFather)); //? true
-            Debug.Log(father.Overlaps(kidFather.EditTestGetKid)); //? false
-            Debug.Log(kidFather.Overlaps(father)); //? true
-            Debug.Log(kidFather.Overlaps(kidFather.EditTestGetKid)); //? true
+                        Debug.Log(father.Overlaps(null)); //??? false
+                        Debug.Log(father.Overlaps(kidFather)); //? true
+                        Debug.Log(father.Overlaps(kidFather.EditTestGetKid)); //? false
+                        Debug.Log(kidFather.Overlaps(father)); //? true
+                        Debug.Log(kidFather.Overlaps(kidFather.EditTestGetKid)); //? true
+            */
+
+            int counter = 0;
+            InvoAdvanced.Repeat(
+                (invaki) =>
+                {
+                    int iteration = invaki.GetIterationIndex;
+
+                    if(UnityEngine.Random.Range(0, 100) < 20)
+                    {
+                        Debug.LogError("i kill you");
+                        invaki.KillMe();
+                        return;
+                    }
+
+                    Debug.LogError($"Iteration: {iteration} counter: {counter}");
+
+                    counter++;
+
+                }, 1f, 15)
+                .SetStartDelay(1f)
+                .SetEndAction(() => Debug.Log("Finished!"))
+                .SetDeathAction(() => Debug.LogError("I was killed!"));
 
 
-
-
+            return;
 
             var toEna = Invo.Simple(
                 () =>

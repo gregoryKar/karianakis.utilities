@@ -1,5 +1,6 @@
 
 using System;
+using UnityEngine;
 
 
 namespace Karianakis.Utilities
@@ -9,13 +10,13 @@ namespace Karianakis.Utilities
 
 
         internal Action<invoAdvancedBuilder> _action;
-        
+
 
         internal invoAdvancedBuilder(Action<invoAdvancedBuilder> action, float delay, int repeatsLeft) : base(delay, repeatsLeft, null) => _action = action;
 
 
         internal override void InvokeMe(InvoBase _me) => _action.Invoke((invoAdvancedBuilder)_me);
-  
+
 
         //? EXPOSED
         public invoAdvancedBuilder SetStartDelay(float startDelay)
@@ -33,9 +34,12 @@ namespace Karianakis.Utilities
             SetIdInternal(id);
             return this;
         }
+        public invoAdvancedBuilder SetDeathAction(Action deathAction)
+        {
+            SetDeathActionInternal(deathAction);
+            return this;
+        }
 
-
-
-
+    
     }
 }
