@@ -23,7 +23,6 @@ namespace Karianakis.Utilities
                 {
                     var gameObject = new GameObject("invoManager");
                     instForbidden = gameObject.AddComponent<InvoManager>();
-                    instForbidden.EditInitHeapTest();
                 }
                 return instForbidden;
             }
