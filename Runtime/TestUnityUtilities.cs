@@ -13,16 +13,25 @@ namespace Karianakis.Utilities
         private void Start()
         {
 
-            /*
-                        MyId father = new MyId();
-                        MyKidFatherId kidFather = new MyKidFatherId(father);
 
-                        Debug.Log(father.Overlaps(null)); //??? false
-                        Debug.Log(father.Overlaps(kidFather)); //? true
-                        Debug.Log(father.Overlaps(kidFather.EditTestGetKid)); //? false
-                        Debug.Log(kidFather.Overlaps(father)); //? true
-                        Debug.Log(kidFather.Overlaps(kidFather.EditTestGetKid)); //? true
-            */
+
+            TestHeapValidityWithSetStartTime();
+            return;
+
+
+
+            /*
+                MyId father = new MyId();
+                MyKidFatherId kidFather = new MyKidFatherId(father);
+
+                Debug.Log(father.Overlaps(null)); //??? false
+                Debug.Log(father.Overlaps(kidFather)); //? true
+                Debug.Log(father.Overlaps(kidFather.EditTestGetKid)); //? false
+                Debug.Log(kidFather.Overlaps(father)); //? true
+                Debug.Log(kidFather.Overlaps(kidFather.EditTestGetKid)); //? true
+                      */
+
+
 
             int counter = 0;
             InvoAdvanced.Repeat(
@@ -30,7 +39,7 @@ namespace Karianakis.Utilities
                 {
                     int iteration = invaki.GetIterationIndex;
 
-                    if(UnityEngine.Random.Range(0, 100) < 20)
+                    if (UnityEngine.Random.Range(0, 100) < 20)
                     {
                         Debug.LogError("i kill you");
                         invaki.KillMe();
@@ -86,6 +95,21 @@ namespace Karianakis.Utilities
 
 
 
+
+        }
+
+        void TestHeapValidityWithSetStartTime()
+        {
+                //0.5- 1- 1.1- 1.2- 2
+                //0.5- 1- 1.1- 1.2- 0.7
+             
+
+            Invo.Simple(() => Debug.Log($"Hello {Time.time}"), 0.5f);
+            Invo.Simple(() => Debug.Log($"Hello {Time.time}"), 1f);
+            Invo.Simple(() => Debug.Log($"Hello {Time.time}"), 1.1f);
+            Invo.Simple(() => Debug.Log($"Hello {Time.time}"), 1.2f);
+            Invo.Simple(() => Debug.Log($"Hello {Time.time}"), 2f)
+                .SetStartDelay(0.7f);
 
         }
 

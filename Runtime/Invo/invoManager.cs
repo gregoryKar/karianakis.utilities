@@ -33,19 +33,21 @@ namespace Karianakis.Utilities
 
         void Update()
         {
+         
+
             while (_invokes.Count > 0)
             {
                 var invo = _invokes[0];
-                if (MyTime.mommentPassed(invo.GetEnd) is false) break;
+                if (MyTime.mommentPassed(invo.GetEnd) == false) break;
 
                 RemoveFirst();
 
-                if (invo.GetKillMe is false)
+                if (invo.GetKillMe == false)
                 {
                     invo.InvokeMe(invo);
                     invo.Process();
 
-                    if (invo.GetKillMe is false)
+                    if (invo.GetKillMe == false)
                     {
                         AddItemSorted(invo);
                     }
@@ -53,15 +55,15 @@ namespace Karianakis.Utilities
             }
 
 #if UNITY_EDITOR && KARIANAKIS
-            
-            if(_displayedImTestingLog == false)
+
+            if (_displayedImTestingLog == false)
             {
                 _displayedImTestingLog = true;
                 Debug.LogWarning($"init infinite invokes heap test");
             }
 
             _editHeapTestTimer += Time.deltaTime;
-            if(_editHeapTestTimer >= _editHeapTestInterval)
+            if (_editHeapTestTimer >= _editHeapTestInterval)
             {
                 _editHeapTestTimer = 0f;
                 TestHeapValidity();
@@ -70,9 +72,9 @@ namespace Karianakis.Utilities
 
         }
 
-        
+
 #if UNITY_EDITOR && KARIANAKIS
-bool _displayedImTestingLog;
+        bool _displayedImTestingLog;
         float _editHeapTestTimer;
         const float _editHeapTestInterval = .5f;
 #endif
@@ -171,6 +173,39 @@ bool _displayedImTestingLog;
         }
 
 
+      
+
+        void PrintNearIndex(int index, int distanceMax)
+        {
+            int start = Mathf.Max(0, index - distanceMax);
+            int end = Mathf.Min(_invokes.Count - 1, index + distanceMax);
+
+            for (int i = start; i <= end; i++)
+            {
+                if (i == index)
+                {
+                    Debug.LogError("INDEX START POINT");
+                }
+
+                Debug.Log($"Index {i}: {_invokes[i].GetEnd}");
+            }
+        }
+
+        void ReorderItemLocal(InvoBase thisOne)
+        {
+            int index = _invokes.IndexOf(thisOne);
+            if (index == -1) return;
+            // Try both directions, as value may have increased or decreased
+            if (index > 0 && _invokes[index].CompareTo(_invokes[(index - 1) / 2]) < 0)
+            {
+                HeapifyUp(index);
+            }
+            else
+            {
+                HeapifyDown(index);
+            }
+        }
+
 
         void TestHeapValidity()
         {
@@ -183,11 +218,14 @@ bool _displayedImTestingLog;
                 if (left < _invokes.Count && _invokes[left].CompareTo(_invokes[i]) < 0)
                 {
                     Debug.LogError($"Heap property violated at index {i} with left child {left}");
+                    PrintNearIndex(i, 10);
                 }
 
                 if (right < _invokes.Count && _invokes[right].CompareTo(_invokes[i]) < 0)
                 {
                     Debug.LogError($"Heap property violated at index {i} with right child {right}");
+                    PrintNearIndex(i, 10);
+
                 }
             }
         }
@@ -231,6 +269,10 @@ bool _displayedImTestingLog;
         //? EXPOSED
         internal static void Add(InvoBase thisOne)
             => inst.AddItemSorted(thisOne);
+        internal static void ReorderItem(InvoBase thisOne)
+            => inst.ReorderItemLocal(thisOne);
+
+
         public static void KillAll(MyId id)
             => inst.KillAllLocal(id);
         public static bool Exists(MyId id)

@@ -57,7 +57,10 @@ namespace Karianakis.Utilities
         internal MyId GetId => _id;
 
         internal void OvverideCurrentEndTime(float delay)
-            => _end = MyTime.now + delay;
+        {
+            _end = MyTime.now + delay;
+            InvoManager.ReorderItem(this);
+        }
 
         internal void SetIdInternal(MyId id)
                  => _id = id;
@@ -103,7 +106,8 @@ namespace Karianakis.Utilities
         /// if called at random time need to wait for previous
         /// time left
         /// <param name="delay"></param>
-        public void SetDelay(float delay) => _delay = delay;
+        public void SetDelay(float delay)
+            => _delay = delay;
         public void KillMe()
         {
             _killMe = true;
