@@ -7,50 +7,46 @@ using UnityEngine;
 
 namespace Karianakis.Utilities
 {
-  
-    public class myId : myIdBase //: IEquatable<myId>, IEquatable<int>
+
+    public class MyId : MyIdBase //: IEquatable<myId>, IEquatable<int>
     {
 
 
-        static int idCounter;
+        static int _idCounter;
         int _idForbidden;
         public int _id
         {
-            get { return _idForbidden; }
-            private set { _idForbidden = value; }
+            get
+            {
+                return _idForbidden;
+            }
+            private set
+            {
+                _idForbidden = value;
+            }
         }
-        public myId()
+        public MyId()
         {
-            idCounter++;
-            if (idCounter > 9999) idCounter = 0;
-            _id = idCounter;
+            _idCounter++;
+            _id = _idCounter;
         }
 
 
 
-        public override void killAll() => invoManager.killAll(this);
-
-    
-
-
-
-        public override bool containsInt(int number) => _id == number;
-
-
-        public override bool Equals(myIdBase other)
+        public override void KillMe() => InvoManager.KillAll(this);
+      
+        internal override bool ContainsIntId(int number) 
+            => _id == number;
+        protected override bool OverlapsInternal(MyIdBase other)
         {
-            if (other.containsInt(_id) is false) return false;
-            return true;
-
-            //if (other is myId) return getIdType() == other.getIdType();
-            // if (other is myKidFatherId dual) return dual.Equals(this);
-            // else
-            // {
-
-            //     Debug.LogError("TYPE A = " + getIdType() + " B = " + other.getIdType());
-            //     throw new NotImplementedException("ID EQUATION CASE");
-            // }
-
+            if (other.ContainsIntId(_id))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
     }

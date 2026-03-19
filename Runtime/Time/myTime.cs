@@ -12,7 +12,7 @@ using System;
 namespace Karianakis.Utilities
 {
 
-    public static class myTime
+    public static class MyTime
     {
 
 

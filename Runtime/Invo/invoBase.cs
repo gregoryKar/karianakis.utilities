@@ -4,49 +4,106 @@
 //todo instead of float time , myTime variable that can just set to gameTime
 // so no need to seperate in process logic
 
+using System;
+using UnityEngine;
+
 namespace Karianakis.Utilities
 {
 
-    public abstract class invoBase
+    public abstract class InvoBase : IComparable<InvoBase> 
     {
 
+        MyId _id;
+        float _delay;
+        float _end;
+        int _repeatsLeft;
+        int _iterationIndex;
+        bool _infinite;
+        bool _killMe;
 
-        public myId _id;
-        public float _delay, _end;
-        public int _repeatsLeft;
-        public bool _infinite, _killMe;
+        Action _endAction;
 
-
-        public abstract void invokeMe(invoBase _me);
-
-
-        public invoBase(float delay = 0, int repeats = 0, bool infinite = false, myId id = null, float startDelay = -1)
+        internal InvoBase(
+           float delay,
+           int repeats,
+           MyId id)
         {
-            if (startDelay < 0) _end = myTime.now + delay;
-            else _end = myTime.now + startDelay;
+#if UNITY_EDITOR
+            if (Application.isEditor && Application.isPlaying is false)
+            {
+                Debug.LogError("InvoBase should not be created in edit mode");
+                return;
+            }
+#endif
 
+            _end = MyTime.now + delay;
 
             _delay = delay;
             _repeatsLeft = repeats;
-            _infinite = infinite;
-
             _id = id;
 
-            _infinite = repeats == -1 || infinite;
+            _infinite = IsInfiniteRepeats(repeats);
 
-            invoManager.add(this);
+            InvoManager.Add(this);
         }
 
-        public virtual void process()
+
+        internal const int _infiniteRepeats = -1;
+        internal bool IsInfiniteRepeats(int repeats)
+                  => repeats == _infiniteRepeats;
+        internal float GetEnd => _end;
+        internal bool GetKillMe => _killMe;
+        internal MyId GetId => _id;
+
+        internal void OvverideCurrentEndTime(float delay)
+            => _end = MyTime.now + delay;
+
+        internal void SetIdInternal(MyId id)
+                 => _id = id;
+
+        internal void SetEndActionInternal(Action endAction)
+            => _endAction = endAction;
+
+        internal void Process()
         {
             _repeatsLeft--;
+            _iterationIndex++;
 
-            if (_infinite is false && _repeatsLeft < 1) _killMe = true;
-            else _end = myTime.now + _delay;
-
+            if (_infinite is false && _repeatsLeft < 1)
+            {
+                _killMe = true;
+                _endAction?.Invoke();
+            }
+            else
+            {
+                _end = MyTime.now + _delay;
+            }
         }
 
-        public void setDelay(float delay) => _delay = delay;
 
+        internal abstract void InvokeMe(InvoBase _me);
+
+
+        //? EXPOSED
+        public int GetIterationIndex => _iterationIndex;
+        public int GetRepeatsLeft => _repeatsLeft;
+        public float GetDelay => _delay;
+
+
+        /// <summary>
+        /// sets the delay and ignores the current time
+        /// so it needs to get executed to take effect
+        /// if called from withing the invocation of the invo
+        /// the the this will be the new delay
+        /// if called at random time need to wait for previous
+        /// time left
+        /// <param name="delay"></param>
+        public void SetDelay(float delay) => _delay = delay;
+        public void KillMe() => _killMe = true;
+
+        public int CompareTo(InvoBase other)
+        {
+            return GetEnd.CompareTo(other.GetEnd);
+        }
     }
 }

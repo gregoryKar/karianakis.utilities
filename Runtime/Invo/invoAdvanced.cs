@@ -1,28 +1,21 @@
 
+
+
 using System;
+using Karianakis.Utilities;
 
-
-namespace Karianakis.Utilities
+public class InvoAdvanced
 {
-    public class invoAdvanced : invoBase
-    {
+    public static invoAdvancedBuilder Simple
+         (Action<invoAdvancedBuilder> action, float delay)
+             => new invoAdvancedBuilder(action, delay , 0 );
 
+    public static invoAdvancedBuilder Repeat
+        (Action<invoAdvancedBuilder> action, float delay, int repeat) 
+            => new invoAdvancedBuilder(action, delay, repeat);
+        
+    public static invoAdvancedBuilder Infinite
+        (Action<invoAdvancedBuilder> action, float delay) 
+            => new invoAdvancedBuilder(action, delay, InvoBase._infiniteRepeats);
 
-        public Action<invoAdvanced> _action;
-
-        private invoAdvanced(Action<invoAdvanced> action, float delay, int repeatsLeft, myId id = null, float startDelay = -1) : base(delay, repeatsLeft, id: id, startDelay: startDelay) => _action = action;
-
-
-        public static invoAdvanced simple(Action<invoAdvanced> action, float delay, myId id = null) => new invoAdvanced(action, delay, 0, id: id);
-        public static invoAdvanced repeat(Action<invoAdvanced> action, float delay, int repeat, myId id = null, float startDelay = -1) => new invoAdvanced(action, delay, repeat, id: id, startDelay: startDelay);
-
-        public static invoAdvanced infinite(Action<invoAdvanced> action, float delay, myId id = null, float startDelay = -1) => new invoAdvanced(action, delay, -1, id: id, startDelay: startDelay);
-
-        public override void invokeMe(invoBase _me) => _action.Invoke((invoAdvanced)_me);
-
-
-
-
-
-    }
 }

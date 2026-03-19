@@ -4,155 +4,228 @@ using UnityEngine;
 
 namespace Karianakis.Utilities
 {
-
-
-    public class invoManager : MonoBehaviour
+    public class InvoManager : MonoBehaviour
     {
 
-        #region  BASICS
-
-        static invoManager instForbidden;
-
-        static invoManager inst
+        private static InvoManager instForbidden;
+        private static InvoManager inst
         {
             get
             {
+#if UNITY_EDITOR
+                if (Application.isEditor && Application.isPlaying == false)
+                {
+                    Debug.LogError("DONT CALL INVO MANAGER ONLY IN EDIT MODE");
+                    return null;
+                }
+#endif
                 if (instForbidden == null)
                 {
                     var gameObject = new GameObject("invoManager");
-                    instForbidden = gameObject.AddComponent<invoManager>();
+                    instForbidden = gameObject.AddComponent<InvoManager>();
+                    instForbidden.EditInitHeapTest();
                 }
                 return instForbidden;
             }
 
         }
 
-        List<invoBase> invokes = new();
-
-        #endregion
+        private List<InvoBase> _invokes = new();
 
 
-        // thought for game and normal invos habing bools 
-        // and need both true .. after not ready game > gameInvos true px
-
-        // INVO UPDATES (they run every frame) PENDING
-
-        // posssibility of being invoked again possibly after possition change ??
-        // i put check for now
-
-        [SerializeField] int invoCount, invoProccessed, invoChecked;
         void Update()
         {
-            //! FOR NOW ZERO OPTIMISATION
-            //! for now if finds one not done LEAVE cause they are sorted .. ..
-
-            invoProccessed = 0;
-            invoChecked = 0;
-            int i = invokes.Count - 1;
-
-            while (invokes.Count > 0
-            && i < invokes.Count
-            && i > -1)
+            while (_invokes.Count > 0)
             {
-                invoChecked++;
-                invoBase _invo = invokes[i];
+                var invo = _invokes[0];
+                if (MyTime.mommentPassed(invo.GetEnd) is false) break;
 
-                //if (myTime.passedGlobal(_invo._end) is false) break;
-                //if (Time.timeSinceLevelLoad < _invo._end) { i--; continue; }
-                if (myTime.mommentPassed(_invo._end) is false) { i--; continue; }
+                RemoveFirst();
 
-                invoProccessed++;
-                if (_invo._killMe is false)
+                if (invo.GetKillMe is false)
                 {
-                    _invo.invokeMe(_invo);
-                    _invo.process();
+                    invo.InvokeMe(invo);
+                    invo.Process();
+
+                    if (invo.GetKillMe is false)
+                    {
+                        AddItemSorted(invo);
+                    }
                 }
-                else invokes.RemoveAt(i);
-
-                i--;
-
-
-
-
-                //! REPEAT PROCESSING
-                // if (!_invo._infinite) _invo._repeatsLeft--;
-                // if (!_invo._infinite && _invo._repeatsLeft <= 0)
-                // else _invo._end = myTime.now + _invo._delay;
-
-                // else
-                // {
-                //     sortItem(_invo);
-                //     if (myTime.passedGlobal(_invo._end))
-                //     {
-                //         Debug.LogError("SERIOUS PROBLEM");
-                //         Debug.LogError("INVO WILL GO INFINITE");
-                //         _invo._end = myTime.now + 0.1f;
-                //     }
-                // }
-
-
             }
-
-            invoCount = invokes.Count;
-
         }
 
 
 
-        //public static void add(invoBase thisOne) => inst.addSorted(thisOne);
-        public static void add(invoBase thisOne) => inst.invokes.Add(thisOne);
-
-        public static void killAll(myId id)
+        //? BASE FUNCTIONALITY
+        // they call it push 
+        void AddItemSorted(InvoBase thisOne)
         {
-            //todo duplicate same frame killAll with same id check ..
+            _invokes.Add(thisOne);
+            HeapifyUp(_invokes.Count - 1);
+        }
 
-            if (id == null) { Debug.LogError(" KILL NULL ID "); }
-            foreach (var item in inst.invokes)
+        void RemoveItem(InvoBase thisOne)
+        {
+            int index = _invokes.IndexOf(thisOne);
+            if (index == -1) return;
+
+            if (index == _invokes.Count - 1)
             {
-                if (item._id == null) continue;
-
-                if (item._id.Equals(id) is false) continue;
-
-                // Debug.Log("KILLED ID " + item._id._id);
-                item._killMe = true;
+                _invokes.RemoveAt(index);
+                return;
             }
+
+            SwapPositions(index, _invokes.Count - 1);
+            _invokes.RemoveAt(_invokes.Count - 1);
+
+            // Only call one heapify direction as needed
+            if (index > 0 && _invokes[index]
+                .CompareTo(_invokes[(index - 1) / 2]) < 0)
+            {
+                HeapifyUp(index);
+            }
+            else
+            {
+                HeapifyDown(index);
+            }
+        }
+
+        // they call it pop why do they also return the popped item ?
+        void RemoveFirst()
+        {
+            if (_invokes.Count == 1)
+            {
+                _invokes.RemoveAt(0);
+                return;
+            }
+
+            SwapPositions(0, _invokes.Count - 1);
+            _invokes.RemoveAt(_invokes.Count - 1);
+            HeapifyDown(0);
 
         }
 
+        void HeapifyUp(int index)
+        {
+            while (index > 0)
+            {
+                int parentIndex = (index - 1) / 2;
+                if (_invokes[index].CompareTo(_invokes[parentIndex]) >= 0)
+                    break;
 
-        // void addSorted(invoBase thisOne)
-        // {
-        //     if (invokes.Count == 0)
-        //     {
-        //         invokes.Add(thisOne);
-        //         return;
-        //     }
+                SwapPositions(index, parentIndex);
+                index = parentIndex;
+            }
+        }
 
-        //     int index = invokes.FindIndex(inv => thisOne._end < inv._end);
-        //     if (index == -1)
-        //     {
-        //         invokes.Add(thisOne);
-        //     }
-        //     else
-        //     {
-        //         invokes.Insert(index, thisOne);
-        //     }
+        void HeapifyDown(int index)
+        {
+            int count = _invokes.Count;
 
-        // }
-        //void sortItem(invoBase thisOne)
-        //{
-        //    invokes.Remove(thisOne);
-        //addSorted(thisOne);
-        //}
+            while (true)
+            {
+                int left = index * 2 + 1;
+                int right = index * 2 + 2;
+                int smallest = index;
+
+                if (left < count && _invokes[left].CompareTo(_invokes[smallest]) < 0)
+                    smallest = left;
+
+                if (right < count && _invokes[right].CompareTo(_invokes[smallest]) < 0)
+                    smallest = right;
+
+                if (smallest == index) break;
+
+                SwapPositions(index, smallest);
+                index = smallest;
+            }
+        }
+
+        void SwapPositions(int i, int j)
+        {
+            var temp = _invokes[i];
+            _invokes[i] = _invokes[j];
+            _invokes[j] = temp;
+        }
 
 
-        public static void remove(invoBase thisOne) => inst.invokes.Remove(thisOne);
+        void EditInitHeapTest()
+        {
+
+#if UNITY_EDITOR && KARIANAKIS
+            Debug.LogWarning($"init infinite invokes heap test");
+
+            Invo.Infinite(() =>
+             {
+                 TestHeapValidity();
+             }, 1f);
+#endif
+
+        }
+        void TestHeapValidity()
+        {
+
+            for (int i = 0; i < _invokes.Count; i++)
+            {
+                int left = i * 2 + 1;
+                int right = i * 2 + 2;
+
+                if (left < _invokes.Count && _invokes[left].CompareTo(_invokes[i]) < 0)
+                {
+                    Debug.LogError($"Heap property violated at index {i} with left child {left}");
+                }
+
+                if (right < _invokes.Count && _invokes[right].CompareTo(_invokes[i]) < 0)
+                {
+                    Debug.LogError($"Heap property violated at index {i} with right child {right}");
+                }
+            }
+        }
+
+        //? FUNCTIONS FOR EXPOSED METHODS
+        void KillAllLocal(MyId id)
+        {
+            if (id == null)
+            {
+                Debug.LogError(" KILL NULL ID ");
+                return;
+            }
+            foreach (var item in inst._invokes)
+            {
+                if (item.GetId == null) continue;
+
+                if (item.GetId.Equals(id))
+                {
+                    item.KillMe();
+                }
+            }
+        }
+
+        bool LookIfIdExists(MyId id)
+        {
+            foreach (var item in inst._invokes)
+            {
+                if (item.GetId == null) continue;
+
+                if (item.GetId.Equals(id))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
 
 
 
-
+        //? EXPOSED
+        internal static void Add(InvoBase thisOne)
+            => inst.AddItemSorted(thisOne);
+        public static void KillAll(MyId id)
+            => inst.KillAllLocal(id);
+        public static bool Exists(MyId id)
+            => inst.LookIfIdExists(id);
 
     }
-
 }

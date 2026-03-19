@@ -7,55 +7,44 @@ using UnityEngine;
 
 namespace Karianakis.Utilities
 {
-    //! need to seperate ids ??? like touch id and button id ?? 
-
-    public class myKidFatherId : myIdBase
+    public class MyKidFatherId : MyIdBase
     {
 
-
-
-        myId _idKid;
-        myId _idFather;
-        public myKidFatherId(myId father)
+        MyId _idKid;
+        MyId _idFather;
+        public MyKidFatherId(MyId father)
         {
-            _idKid = new myId();
+            _idKid = new MyId();
             _idFather = father;
         }
-        public myId getKid => _idKid;
-        public myId getFather => _idFather;
 
+        internal MyId EditTestGetKid => _idKid;
 
-        public void killKid()
+        /// <summary>
+        /// kills ONLY THE KID the father needs to be killed seperately
+        /// </summary>
+        public override void KillMe()
+            => _idKid.KillMe();
+
+        internal override bool ContainsIntId(int number)
+            => _idKid.ContainsIntId(number) ||
+            _idFather.ContainsIntId(number);
+
+        protected override bool OverlapsInternal(MyIdBase other)
         {
-            _idKid.killAll();
+            if (other.ContainsIntId(_idKid._id))
+            {
+                return true;
+            }
+            else if (other.ContainsIntId(_idFather._id))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
-
-
-        //! WILL NOT BE USED - ONLY KILL KID FOR NOW
-        public void killFather_CAREFULL()
-        {
-            Debug.LogError("FORBIDEN FOR NOW WHY NEEDED ???");
-            Debug.LogError("FORBIDEN FOR NOW WHY NEEDED ???");
-            Debug.LogError("FORBIDEN FOR NOW WHY NEEDED ???");
-        }
-        public override void killAll()
-        {
-            Debug.LogError("USE killKid INSTEAD");
-            Debug.LogError("USE killKid INSTEAD");
-            Debug.LogError("USE killKid INSTEAD");
-        }
-
-
-
-
-
-        public override bool containsInt(int number) =>
-        _idKid.containsInt(number) || _idFather.containsInt(number);
-
-        public override bool Equals(myIdBase other) =>
-        _idKid.Equals(other) || _idFather.Equals(other);
-
-
 
     }
 }

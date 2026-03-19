@@ -11,42 +11,41 @@ namespace Karianakis.Utilities
 {
 
     [Serializable]
-    public struct timeStamp : IComparable<timeStamp>
+    public struct TimeStamp : IComparable<TimeStamp>
     {
 
 
-        public float testVariable;
-        //public timeStamp(float after = 0) { _time = myTime.now + after; }
 
-        float _time;//! FLOAT DECIDED
-        public float getTime => _time;
+        float _time;
+        public float GetTime => _time;
 
 
 
         //SETTERS
-        public void setCustom(float time) => _time = time;
-        public void setNow() => _time = myTime.now;
-        public void setAfter(float after) => _time = myTime.now + after;
-        public void setAfterPoint(float point, float after) => setCustom(point + after);
+        public void SetCustomTime(float time) => _time = time;
+        public void SetNow() => _time = MyTime.now;
+        public void SetFromNow(float after) => _time = MyTime.now + after;
+        public void SetAfterPoint(float point, float after) 
+            => SetCustomTime(point + after);
 
 
-        public bool HasThatAmountPassed(float amount) => myTime.now > _time + amount;
+        public bool HasThatAmountPassed(float amount) => MyTime.now > _time + amount;
 
         //COMPARISONS
-        public bool mommentPassed() => myTime.now > _time;
+        public bool MommentPassed() 
+            => MyTime.now > _time;
         // when momment has passed the time will be bigger like time = 2 seconds second , the momment 1 seconds
-        public bool isbefore(timeStamp other) => _time < other._time;
-        public bool isAfter(timeStamp other) => _time > other._time;
+        public bool Isbefore(TimeStamp other) => _time < other._time;
+        public bool IsAfter(TimeStamp other) => _time > other._time;
 
 
 
 
-        public void debugMyTime() => Debug.Log("timeStamp ==" + _time);
+        public void DebugMyTime() => Debug.Log("timeStamp ==" + _time);
 
 
-        public int CompareTo(timeStamp other) => _time.CompareTo(other._time);
-        // what possible uses does this have
-
+        public int CompareTo(TimeStamp other) => _time.CompareTo(other._time);
+       
 
 
 
