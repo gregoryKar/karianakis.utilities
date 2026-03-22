@@ -1,9 +1,6 @@
 
 
 
-//todo instead of float time , myTime variable that can just set to gameTime
-// so no need to seperate in process logic
-
 using System;
 using UnityEngine;
 
@@ -16,7 +13,7 @@ namespace Karianakis.Utilities
         MyId _id;
         float _delay;
         float _end;
-        int _repeatsLeft;
+        int _repeatsMax;
         int _iterationIndex;
         bool _infinite;
         bool _killMe;
@@ -40,7 +37,7 @@ namespace Karianakis.Utilities
             _end = MyTime.now + delay;
 
             _delay = delay;
-            _repeatsLeft = repeats;
+            _repeatsMax = repeats;
             _id = id;
 
             _infinite = IsInfiniteRepeats(repeats);
@@ -72,12 +69,21 @@ namespace Karianakis.Utilities
             => _deathAction = deathAction;
 
 
+        /// <summary>
+        ///    IS BEFORE PROCESS  METHOD
+        /// </summary>
+        internal abstract void InvokeMe(InvoBase _me);
+
+
+        /// <summary>
+        ///    IS AFTER INVOKE ME METHOD
+        /// </summary>
         internal void Process()
         {
-            _repeatsLeft--;
+            //_repeatsLeft--;
             _iterationIndex++;
 
-            if (_infinite is false && _repeatsLeft < 1)
+            if (_infinite is false && _iterationIndex >= _repeatsMax)
             {
                 _killMe = true;
                 _endAction?.Invoke();
@@ -89,12 +95,11 @@ namespace Karianakis.Utilities
         }
 
 
-        internal abstract void InvokeMe(InvoBase _me);
 
 
         //? EXPOSED
         public int GetIterationIndex => _iterationIndex;
-        public int GetRepeatsLeft => _repeatsLeft;
+        public int GetRepeatsLeft => _repeatsMax - _iterationIndex -1;
         public float GetDelay => _delay;
 
 
@@ -112,6 +117,11 @@ namespace Karianakis.Utilities
         {
             _killMe = true;
             _deathAction?.Invoke();
+        }
+        public void EndMe()
+        {
+            _killMe = true;
+            _endAction?.Invoke();
         }
 
 
