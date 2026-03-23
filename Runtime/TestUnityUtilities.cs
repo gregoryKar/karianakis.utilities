@@ -12,14 +12,31 @@ namespace Karianakis.Utilities
         {
 
             InvoGroup.Create(1f)
-                .ThenDo(() => Debug.Log("First"))
-                .ThenDo(() => Debug.Log("Second"))
-                .ThenDo(() => Debug.Log("Third"))
-                .ThenDo(() => Debug.Log("Fourth"))
+                .ThenDo(A)
+                .ThenDo(B)
+                .ThenDo(C)
+                .ThenDo(D)
                 .DoEveryTimeAFTER(() => Debug.Log($"AFTER EVERY ACTION {Time.time}"))
                 .SetDelayArray(_descriptiveDelays.GetDelays())
                 .SetEndAction(() => Debug.Log("Finished!"));
 
+            MyId _id = new MyId();
+         
+            Invo.Repeat(()
+            =>
+            {
+                Debug.Log($"Repeating {Time.time}");
+            }
+             , 0.5f, 10
+             )
+            .SetId(_id)
+            .SetEndAction(() => Debug.Log("Finished repeating!"))
+            .SetDeathAction(() => Debug.Log("KILLED"));
+
+            void A() { }
+            void B() { }
+            void C() { }
+            void D() { }
 
 
 

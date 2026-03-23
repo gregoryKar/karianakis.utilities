@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && ODIN_INSPECTOR
 using Sirenix.OdinInspector;
 #endif
 
@@ -11,7 +11,7 @@ namespace Karianakis.Utilities
     public class DescriptiveDelays
     {
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR && ODIN_INSPECTOR
         [ListDrawerSettings(ShowFoldout = true)]
 #endif
         [SerializeField] DescriptiveDelayItem[] _delays;
