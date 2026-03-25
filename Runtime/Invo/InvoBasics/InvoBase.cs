@@ -111,8 +111,8 @@ namespace Karianakis.Utilities
         /// if called at random time need to wait for previous
         /// time left
         /// <param name="delay"></param>
-        public void SetDelay(float delay)
-            => _delay = delay;
+        // public void SetDelay(float delay)
+        //     => _delay = delay;
         public void KillMe()
         {
             _killMe = true;
@@ -131,10 +131,15 @@ namespace Karianakis.Utilities
         }
 
 
-
+       
 
 
         //? BUILDER METHODS FOR ALL DO 
+        public InvoBase SetDelay(float delay)
+        {
+            _delay = delay;
+            return this;
+        }
         public InvoBase SetStartDelay(float startDelay)
         {
             OvverideCurrentEndTime(startDelay);

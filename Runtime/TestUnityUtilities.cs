@@ -15,7 +15,14 @@ namespace Karianakis.Utilities
             .AddPosition(Vector2.one)
             .SetDuration(1f)
             .SetEndAction(() => Debug.Log("Finished!"));
-            
+
+            InvoAdvanced.Infinite((builder) =>
+            {
+                Debug.Log($"Repeating {Time.time}");
+            }, 1f).SetDelay
+            (0.5f).SetEndAction(() => Debug.Log("Finished repeating!"))
+            .SetDeathAction(() => Debug.Log("KILLED"));
+
 
             InvoGroup.Create(1f)
                 .ThenDo(A)
@@ -27,7 +34,7 @@ namespace Karianakis.Utilities
                 .SetEndAction(() => Debug.Log("Finished!"));
 
             MyId _id = new MyId();
-         
+
             Invo.Repeat(()
             =>
             {
