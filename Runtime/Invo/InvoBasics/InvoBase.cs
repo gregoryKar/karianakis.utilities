@@ -99,7 +99,7 @@ namespace Karianakis.Utilities
 
         //? EXPOSED
         public int GetIterationIndex => _iterationIndex;
-        public int GetRepeatsLeft => _repeatsMax - _iterationIndex -1;
+        public int GetRepeatsLeft => _repeatsMax - _iterationIndex - 1;
         public float GetDelay => _delay;
 
 
@@ -129,5 +129,38 @@ namespace Karianakis.Utilities
         {
             return GetEnd.CompareTo(other.GetEnd);
         }
+
+
+
+
+
+        //? BUILDER METHODS FOR ALL DO 
+        public InvoBase SetStartDelay(float startDelay)
+        {
+            OvverideCurrentEndTime(startDelay);
+            return this;
+        }
+        public InvoBase SetId(MyId id)
+        {
+            SetIdInternal(id);
+            return this;
+        }
+        public InvoBase SetEndAction(Action endAction)
+        {
+            SetEndActionInternal(endAction);
+            return this;
+        }
+        public InvoBase SetDeathAction(Action deathAction)
+        {
+            SetDeathActionInternal(deathAction);
+            return this;
+        }
+        public InvoBase SetDeathOrEndAction(Action deathAction)
+        {
+            SetDeathActionInternal(deathAction);
+            SetEndActionInternal(deathAction);
+            return this;
+        }
+
     }
 }

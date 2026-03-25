@@ -11,6 +11,12 @@ namespace Karianakis.Utilities
         private void Start()
         {
 
+            Linvo.Global(transform)
+            .AddPosition(Vector2.one)
+            .SetDuration(1f)
+            .SetEndAction(() => Debug.Log("Finished!"));
+            
+
             InvoGroup.Create(1f)
                 .ThenDo(A)
                 .ThenDo(B)
