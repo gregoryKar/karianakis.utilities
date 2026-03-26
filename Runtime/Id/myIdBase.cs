@@ -1,15 +1,32 @@
-
-
-
-
-using System;
-
 namespace Karianakis.Utilities
 {
-    //! need to seperate ids ??? like touch id and button id ??
-
+    /*
+    equals , == != all use the int id check
+    if you want to check if they are the same reference use StrictReferenceEquals
+    */
     public abstract class MyIdBase
     {
+        public override bool Equals(object obj)
+        {
+            if (obj is null) return false;
+            if (obj is MyIdBase other)
+                return Overlaps(other);
+            return false;
+        }
+        public override int GetHashCode() => base.GetHashCode();
+
+
+        public static bool operator ==(MyIdBase left, MyIdBase right)
+        {
+            if (left is null || right is null) return false;
+            return left.Overlaps(right);
+        }
+
+        public static bool operator !=(MyIdBase left, MyIdBase right)
+        {
+            return !(left == right);
+        }
+
         public abstract void KillMe();
 
 
@@ -21,8 +38,15 @@ namespace Karianakis.Utilities
             if (other == null) return false;
             return OverlapsInternal(other);
         }
-
-
-
+        
+        
+        public bool StrictReferenceEquals(MyIdBase otherId)
+        {
+            if (otherId == null)
+            {
+                return false;
+            }
+            return ReferenceEquals(this, otherId);
+        }
     }
 }

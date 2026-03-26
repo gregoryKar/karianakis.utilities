@@ -11,6 +11,8 @@ namespace Karianakis.Utilities
         private void Start()
         {
 
+            TestIdOverlap();
+
             Linvo.Global(transform)
             .AddPosition(Vector2.one)
             .SetDuration(1f)
@@ -80,6 +82,18 @@ namespace Karianakis.Utilities
             Debug.Log(father.Overlaps(kidFather.EditTestGetKid)); //? false
             Debug.Log(kidFather.Overlaps(father)); //? true
             Debug.Log(kidFather.Overlaps(kidFather.EditTestGetKid)); //? true
+
+            Debug.Log(father == (null)); //??? false
+
+            Debug.Log(father.StrictReferenceEquals(kidFather)); //? true
+            Debug.Log(father == kidFather.EditTestGetKid); //? false
+            Debug.Log(kidFather.Overlaps(father)); //? true
+            Debug.Log(kidFather.Overlaps(kidFather.EditTestGetKid)); //? true
+
+            MyId id0 = new MyId();
+            MyId id1 = new MyId();
+            if (id0 == id1) { }
+            if (id0.Equals(id1)) { }
 
         }
 

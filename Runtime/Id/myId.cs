@@ -1,14 +1,8 @@
 
-
-
-
-using System;
-using UnityEngine;
-
 namespace Karianakis.Utilities
 {
 
-    public class MyId : MyIdBase //: IEquatable<myId>, IEquatable<int>
+    public class MyId : MyIdBase
     {
 
 
@@ -34,9 +28,9 @@ namespace Karianakis.Utilities
 
 
         public override void KillMe() => InvoManager.KillAll(this);
-      
-        internal override bool ContainsIntId(int number) 
-            => _id == number;
+
+        internal override bool ContainsIntId(int number) => _id == number;
+
         protected override bool OverlapsInternal(MyIdBase other)
         {
             if (other.ContainsIntId(_id))
