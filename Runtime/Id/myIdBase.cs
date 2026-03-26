@@ -7,8 +7,8 @@ namespace Karianakis.Utilities
     public abstract class MyIdBase
     {
         public override bool Equals(object obj)
-        {   
-            
+        {
+
             if (ReferenceEquals(this, obj)) return true;
             if (obj is MyIdBase other)
                 return Overlaps(other);
@@ -19,6 +19,7 @@ namespace Karianakis.Utilities
 
         public static bool operator ==(MyIdBase left, MyIdBase right)
         {
+            if (ReferenceEquals(left, right)) return true;
             if (left is null || right is null) return false;
             return left.Overlaps(right);
         }
