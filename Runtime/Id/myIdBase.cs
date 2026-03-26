@@ -7,8 +7,9 @@ namespace Karianakis.Utilities
     public abstract class MyIdBase
     {
         public override bool Equals(object obj)
-        {
-            if (obj is null) return false;
+        {   
+            
+            if (ReferenceEquals(this, obj)) return true;
             if (obj is MyIdBase other)
                 return Overlaps(other);
             return false;
@@ -38,8 +39,8 @@ namespace Karianakis.Utilities
             if (other == null) return false;
             return OverlapsInternal(other);
         }
-        
-        
+
+
         public bool StrictReferenceEquals(MyIdBase otherId)
         {
             if (otherId == null)

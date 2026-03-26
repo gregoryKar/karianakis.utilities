@@ -74,6 +74,15 @@ namespace Karianakis.Utilities
 
         void TestIdOverlap()
         {
+
+            MyId noNullId = new MyId();
+            Debug.LogError(noNullId == null);
+            Debug.LogError(noNullId.Equals(null));
+
+            MyId nullId = null;
+            Debug.LogError(nullId == null);
+            //Debug.LogError(nullId.Equals(null));
+
             MyId father = new MyId();
             MyKidFatherId kidFather = new MyKidFatherId(father);
 
@@ -94,6 +103,8 @@ namespace Karianakis.Utilities
             MyId id1 = new MyId();
             if (id0 == id1) { }
             if (id0.Equals(id1)) { }
+
+
 
         }
 
