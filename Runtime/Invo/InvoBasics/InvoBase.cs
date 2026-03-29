@@ -54,7 +54,7 @@ namespace Karianakis.Utilities
         internal bool GetKillMe => _killMe;
         internal MyId GetId => _id;
 
-        internal bool GetIsPaused => _paused;
+
 
         internal void OvverideCurrentEndTime(float delay)
         {
@@ -104,7 +104,7 @@ namespace Karianakis.Utilities
         public int GetIterationIndex => _iterationIndex;
         public int GetRepeatsLeft => _repeatsMax - _iterationIndex - 1;
         public float GetDelay => _delay;
-
+        public bool GetIsPaused => _paused;
 
         public void Pause()
         {
