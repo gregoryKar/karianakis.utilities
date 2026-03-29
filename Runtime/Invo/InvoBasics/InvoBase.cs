@@ -17,6 +17,7 @@ namespace Karianakis.Utilities
         int _iterationIndex;
         bool _infinite;
         bool _killMe;
+        bool _paused;
 
         Action _endAction;
         Action _deathAction;
@@ -52,6 +53,8 @@ namespace Karianakis.Utilities
         internal float GetEnd => _end;
         internal bool GetKillMe => _killMe;
         internal MyId GetId => _id;
+
+        internal bool GetIsPaused => _paused;
 
         internal void OvverideCurrentEndTime(float delay)
         {
@@ -103,6 +106,30 @@ namespace Karianakis.Utilities
         public float GetDelay => _delay;
 
 
+        public void Pause()
+        {
+            if (_paused)
+            {
+                Debug.LogError("unity-utilities : Attempted to pause an invo that is already paused");
+                return;
+            }
+            _paused = true;
+            _delay = _end - MyTime.now;
+        }
+        public void Unpause()
+        {
+            if (_paused == false)
+            {
+                Debug.LogError("unity-utilities : Attempted to UN-pause an invo that is NOT paused");
+                return;
+            }
+            _paused = false;
+            _end = MyTime.now + _delay;
+            InvoManager.ReorderItem(this);
+        }
+
+
+
         /// <summary>
         /// sets the delay and ignores the current time
         /// so it needs to get executed to take effect
@@ -125,13 +152,15 @@ namespace Karianakis.Utilities
         }
 
 
+
+
         public int CompareTo(InvoBase other)
         {
             return GetEnd.CompareTo(other.GetEnd);
         }
 
 
-       
+
 
 
         //? BUILDER METHODS FOR ALL DO 

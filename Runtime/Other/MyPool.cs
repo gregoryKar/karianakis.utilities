@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-
-
-
-
 
 namespace Karianakis.Utilities
 {
@@ -36,12 +33,44 @@ namespace Karianakis.Utilities
 
         public void Remove(T node)
         {
-            if (!Active.Contains(node)) { Debug.LogError("Attempted to remove a node that is not active."); return; }
+            if (Active.Contains(node) == false)
+            {
+                Type type = typeof(T);
+
+                bool hasName = false;
+                string monoName = "";
+
+                if (typeof(MonoBehaviour).IsAssignableFrom(type))
+                {
+                    hasName = true;
+                    monoName = (node as MonoBehaviour).name;
+
+                }
+
+                if (hasName == false)
+                {
+                    Debug.LogError($"unity-utilities : Attempted to remove a node that is not active. Type: {type}, NoName");
+                }
+                else
+                {
+                    Debug.LogError($"unity-utilities : Attempted to remove a node that is not active. Type: {type}, Name: {monoName}");
+                }
+                return;
+            }
 
             Active.Remove(node);
             Deactivate(node);
             Inactive.Push(node);
         }
+        public void RemoveAllActiveItems()
+        {
+            var array = Active.ToArray();
+            for (int i = 0; i < array.Length; i++)
+            {
+                Remove(array[i]);
+            }
+        }
+    
     }
 }
 

@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -33,7 +34,7 @@ namespace Karianakis.Utilities
 
         void Update()
         {
-         
+
 
             while (_invokes.Count > 0)
             {
@@ -173,7 +174,7 @@ namespace Karianakis.Utilities
         }
 
 
-      
+
 
         void PrintNearIndex(int index, int distanceMax)
         {
@@ -266,17 +267,39 @@ namespace Karianakis.Utilities
 
 
 
-        //? EXPOSED
+        //? EXPOSED INTRENAL
         internal static void Add(InvoBase thisOne)
             => inst.AddItemSorted(thisOne);
         internal static void ReorderItem(InvoBase thisOne)
             => inst.ReorderItemLocal(thisOne);
 
 
+        //? EXPOSED
         public static void KillAll(MyId id)
             => inst.KillAllLocal(id);
         public static bool Exists(MyId id)
             => inst.LookIfIdExists(id);
+            
+        public static void PauseAllWithCondition(Func<InvoBase, bool> condition)
+        {
+            foreach (var item in inst._invokes)
+            {
+                if (condition(item))
+                {
+                    item.Pause();
+                }
+            }
+        }
+        public static void UnpauseAllWithCondition(Func<InvoBase, bool> condition)
+        {
+            foreach (var item in inst._invokes)
+            {
+                if (condition(item))
+                {
+                    item.Unpause();
+                }
+            }
+        }
 
     }
 }
