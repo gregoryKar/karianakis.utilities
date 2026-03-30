@@ -29,7 +29,7 @@ namespace Karianakis.Utilities
             return !(left == right);
         }
 
-        public abstract void KillMe();
+        public abstract void KillAllWithId();
 
 
         internal abstract bool ContainsIntId(int number);

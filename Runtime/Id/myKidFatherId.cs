@@ -23,8 +23,8 @@ namespace Karianakis.Utilities
         /// <summary>
         /// kills ONLY THE KID the father needs to be killed seperately
         /// </summary>
-        public override void KillMe()
-            => _idKid.KillMe();
+        public override void KillAllWithId()
+            => _idKid.KillAllWithId();
 
         internal override bool ContainsIntId(int number)
             => _idKid.ContainsIntId(number) ||

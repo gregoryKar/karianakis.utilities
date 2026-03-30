@@ -27,7 +27,7 @@ namespace Karianakis.Utilities
 
 
 
-        public override void KillMe() => InvoManager.KillAll(this);
+        public override void KillAllWithId() => InvoManager.KillAll(this);
 
         internal override bool ContainsIntId(int number) => _id == number;
 

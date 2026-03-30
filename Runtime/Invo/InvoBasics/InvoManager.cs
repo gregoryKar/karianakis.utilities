@@ -269,9 +269,7 @@ namespace Karianakis.Utilities
         }
 
 
-        //? FUNCTIONS FOR EXPOSED METHODS
-
-
+        //? LOCAL FUNCTIONS FOR EXPOSED METHODS
         bool LookIfIdExists(MyId id)
         {
             if (id == null)
@@ -291,7 +289,6 @@ namespace Karianakis.Utilities
             }
             return false;
         }
-
         void RegisterToEndWithId(MyId id)
         {
             if (id == null)
@@ -311,7 +308,6 @@ namespace Karianakis.Utilities
                 }
             }
         }
-
         void RegisterToDieWithId(MyId id)
         {
             if (id == null)
@@ -331,8 +327,6 @@ namespace Karianakis.Utilities
                 }
             }
         }
-
-
         void RegisterToPauseWithId(MyId id, bool paused)
         {
             if (id == null)
@@ -360,6 +354,17 @@ namespace Karianakis.Utilities
             }
         }
 
+        void ClearAllNoKillOrEndInvocationsLocal()
+        {
+            for (int i = inst._invokes.Count - 1; i >= 0; i--)
+            {
+                var item = inst._invokes[i];
+                item.MarkAsDead();
+            }
+            _invokes.Clear();
+        }
+
+
 
 
         //? EXPOSED INTERNAL
@@ -370,10 +375,7 @@ namespace Karianakis.Utilities
 
 
 
-
-
         //? EXPOSED
-
         public static void PauseAll(MyId id)
            => inst.RegisterToPauseWithId(id, true);
         public static void ResumeAll(MyId id)
@@ -387,9 +389,8 @@ namespace Karianakis.Utilities
         public static bool Exists(MyId id)
             => inst.LookIfIdExists(id);
 
-
-
-
+        public static void ClearAllNoKillOrEndInvocations()
+            => inst.ClearAllNoKillOrEndInvocationsLocal();
 
     }
 }
