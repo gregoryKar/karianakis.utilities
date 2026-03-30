@@ -90,7 +90,7 @@ namespace Karianakis.Utilities
                     {
                         AddItemSorted(invo);
                     }
-                   
+
                 }
             }
 
@@ -300,8 +300,9 @@ namespace Karianakis.Utilities
                 return;
             }
 
-            foreach (var item in inst._invokes)
+            for (int i = inst._invokes.Count - 1; i >= 0; i--)
             {
+                var item = inst._invokes[i];
                 if (item.GetId == null) continue;
 
                 if (item.GetId.Equals(id))
@@ -319,8 +320,9 @@ namespace Karianakis.Utilities
                 return;
             }
 
-            foreach (var item in inst._invokes)
+            for (int i = inst._invokes.Count - 1; i >= 0; i--)
             {
+                var item = inst._invokes[i];
                 if (item.GetId == null) continue;
 
                 if (item.GetId.Equals(id))
@@ -339,8 +341,9 @@ namespace Karianakis.Utilities
                 return;
             }
 
-            foreach (var item in inst._invokes)
+            for (int i = inst._invokes.Count - 1; i >= 0; i--)
             {
+                var item = inst._invokes[i];
                 if (item.GetId == null) continue;
 
                 if (item.GetId.Equals(id))
