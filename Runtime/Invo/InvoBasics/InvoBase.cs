@@ -1,23 +1,30 @@
-
-
-
 using System;
 using UnityEngine;
 
 namespace Karianakis.Utilities
 {
-
     public abstract class InvoBase : IComparable<InvoBase>
     {
-
         MyId _id;
         float _delay;
+        float _savedDelay;
         float _end;
         int _repeatsMax;
         int _iterationIndex;
         bool _infinite;
-        bool _killMe;
-        bool _paused;
+
+        bool _DEAD;
+
+        //? INTERNAL STATUS
+        bool _completed;
+        bool _isPaused;
+
+        //? BOOL ORDERS
+        bool _shceduledToPause;
+        bool _shceduledToResume;
+        bool _shceduledToDie;
+        bool _shceduledToEnd;
+
 
         Action _endAction;
         Action _deathAction;
@@ -47,49 +54,86 @@ namespace Karianakis.Utilities
         }
 
 
+        //? GETTERS INTERNAL 
         internal const int _infiniteRepeats = -1;
         internal bool IsInfiniteRepeats(int repeats)
-                  => repeats == _infiniteRepeats;
+            => repeats == _infiniteRepeats;
+        internal const float _defaultPausedTime = float.MaxValue;
         internal float GetEnd => _end;
-        internal bool GetKillMe => _killMe;
+        internal bool GetCompleted => _completed;
         internal MyId GetId => _id;
 
+        internal bool GetScheduledToPause => _shceduledToPause;
+        internal bool GetScheduledToResume => _shceduledToResume;
+        internal bool GetScheduledToDie => _shceduledToDie;
+        internal bool GetScheduledToEnd => _shceduledToEnd;
 
 
-        internal void OvverideCurrentEndTime(float delay)
+
+        //? SETTERS INTERNAL
+        internal bool MarkAsDead()
+            => _DEAD = true;
+        internal void ResetScheduledToPauseResume()
         {
-            _end = MyTime.now + delay;
+            _shceduledToPause = false;
+            _shceduledToResume = false;
+        }
+        internal void SetIdInternal(MyId id)
+                 => _id = id;
+        internal void SetEndActionInternal(Action endAction)
+            => _endAction = endAction;
+        internal void SetDeathActionInternal(Action deathAction)
+            => _deathAction = deathAction;
+        internal void SetEndTime(float endTime)
+          => _end = endTime;
+        internal void SetPaused(bool isPaused)
+            => _isPaused = isPaused;
+
+
+        //? INTERNAL FUNCTIONS
+        internal void OvverideEndTimeAndReorder(float delayFromNow)
+        {
+            _end = MyTime.now + delayFromNow;
             InvoManager.ReorderItem(this);
         }
 
-        internal void SetIdInternal(MyId id)
-                 => _id = id;
-
-        internal void SetEndActionInternal(Action endAction)
-            => _endAction = endAction;
-
-        internal void SetDeathActionInternal(Action deathAction)
-            => _deathAction = deathAction;
+        internal void TriggerDeathAction()
+        {
+            _deathAction?.Invoke();
+        }
+        internal void TriggerEndAction()
+        {
+            _endAction?.Invoke();
+        }
+        internal void SaveEndDifferenceFromNow()
+        {
+            _savedDelay = MyTime.now - _end;
+        }
+        internal void SetEndFromSavedEndFromNow()
+        {
+            _end = MyTime.now + _savedDelay;
+        }
 
 
         /// <summary>
         ///    IS BEFORE PROCESS  METHOD
         /// </summary>
-        internal abstract void InvokeMe(InvoBase _me);
+        internal abstract void InvokeMeBeforeProcessing(InvoBase _me);
 
 
+        //? MASTER PROCESS ------------------------ ------------------------- 
         /// <summary>
         ///    IS AFTER INVOKE ME METHOD
         /// </summary>
-        internal void Process()
+        internal void ProcessAfterInvocation()
         {
-            //_repeatsLeft--;
             _iterationIndex++;
 
             if (_infinite is false && _iterationIndex >= _repeatsMax)
             {
-                _killMe = true;
-                _endAction?.Invoke();
+                _completed = true;
+                MarkAsDead();
+                TriggerEndAction();
             }
             else
             {
@@ -100,57 +144,90 @@ namespace Karianakis.Utilities
 
 
 
-        //? EXPOSED
+        //? EXPOSED GETTERS
         public int GetIterationIndex => _iterationIndex;
         public int GetRepeatsLeft => _repeatsMax - _iterationIndex - 1;
         public float GetDelay => _delay;
-        public bool GetIsPaused => _paused;
+        public bool GetIsPaused => _isPaused;
 
+        //? EXPOSED FUNCTIONS
         public void Pause()
         {
-            if (_paused)
+            if (_DEAD)
             {
-                Debug.LogError("unity-utilities : Attempted to pause an invo that is already paused");
+                Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT PAUSE - DEAD DEAD DEAD");
                 return;
             }
-            _paused = true;
-            _delay = _end - MyTime.now;
-        }
-        public void Unpause()
-        {
-            if (_paused == false)
+            else if (_isPaused)
             {
-                Debug.LogError("unity-utilities : Attempted to UN-pause an invo that is NOT paused");
+                Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT PAUSE - INVO ALREADY PAUSED");
+            }
+            else
+            {
+                SaveEndDifferenceFromNow();
+                ResetScheduledToPauseResume();
+                _shceduledToPause = true;
+                OvverideEndTimeAndReorder(-1f);
+            }
+        }
+
+        public void Resume()
+        {
+            if (_DEAD)
+            {
+                Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT RESUME - DEAD DEAD DEAD");
                 return;
             }
-            _paused = false;
-            _end = MyTime.now + _delay;
-            InvoManager.ReorderItem(this);
+            else if (_isPaused == false)
+            {
+                Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT RESUME - INVO NOT PAUSED");
+                return;
+            }
+            else
+            {
+                ResetScheduledToPauseResume();
+                _shceduledToResume = true;
+                OvverideEndTimeAndReorder(-1f);
+            }
         }
 
-
-
-        /// <summary>
-        /// sets the delay and ignores the current time
-        /// so it needs to get executed to take effect
-        /// if called from withing the invocation of the invo
-        /// the the this will be the new delay
-        /// if called at random time need to wait for previous
-        /// time left
-        /// <param name="delay"></param>
-        // public void SetDelay(float delay)
-        //     => _delay = delay;
-        public void KillMe()
+        public void Kill()
         {
-            _killMe = true;
-            _deathAction?.Invoke();
-        }
-        public void EndMe()
-        {
-            _killMe = true;
-            _endAction?.Invoke();
+            if (_DEAD)
+            {
+                Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT KILL - DEAD DEAD DEAD");
+                return;
+            }
+            else if (_shceduledToDie == true)
+            {
+                Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT KILL - INVO ALREADY KILLED");
+                return;
+            }
+            else
+            {
+                _shceduledToDie = true;
+                OvverideEndTimeAndReorder(-1f);
+            }
         }
 
+        public void End()
+        {
+            if (_DEAD)
+            {
+                Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT END - DEAD DEAD DEAD");
+                return;
+            }
+            else if (_shceduledToEnd == true)
+            {
+                Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT END - INVO ALREADY ENDED");
+                return;
+            }
+            else
+            {
+                _shceduledToEnd = true;
+                OvverideEndTimeAndReorder(-1f);
+            }
+        }
 
 
 
@@ -161,17 +238,19 @@ namespace Karianakis.Utilities
 
 
 
-
-
         //? BUILDER METHODS FOR ALL DO 
         public InvoBase SetDelay(float delay)
         {
+            if (_DEAD)
+            {
+                Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT SET DELAY - DEAD DEAD DEAD");
+            }
             _delay = delay;
             return this;
         }
         public InvoBase SetStartDelay(float startDelay)
         {
-            OvverideCurrentEndTime(startDelay);
+            OvverideEndTimeAndReorder(startDelay);
             return this;
         }
         public InvoBase SetId(MyId id)

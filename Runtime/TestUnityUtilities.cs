@@ -8,55 +8,17 @@ namespace Karianakis.Utilities
 
         [SerializeField] float[] _delays;
         [SerializeField] DescriptiveDelays _descriptiveDelays;
+
         private void Start()
         {
-
-            TestIdOverlap();
-
-            Linvo.Global(transform)
-            .AddPosition(Vector2.one)
-            .SetDuration(1f)
-            .SetEndAction(() => Debug.Log("Finished!"));
-
-            InvoAdvanced.Infinite((builder) =>
-            {
-                Debug.Log($"Repeating {Time.time}");
-            }, 1f).SetDelay
-            (0.5f).SetEndAction(() => Debug.Log("Finished repeating!"))
-            .SetDeathAction(() => Debug.Log("KILLED"));
-
-
-            InvoGroup.Create(1f)
-                .ThenDo(A)
-                .ThenDo(B)
-                .ThenDo(C)
-                .ThenDo(D)
-                .DoEveryTimeAFTER(() => Debug.Log($"AFTER EVERY ACTION {Time.time}"))
-                .SetDelayArray(_descriptiveDelays.GetDelays())
-                .SetEndAction(() => Debug.Log("Finished!"));
-
-            MyId _id = new MyId();
-
-            Invo.Repeat(()
-            =>
-            {
-                Debug.Log($"Repeating {Time.time}");
-            }
-             , 0.5f, 10
-             )
-            .SetId(_id)
-            .SetEndAction(() => Debug.Log("Finished repeating!"))
-            .SetDeathAction(() => Debug.Log("KILLED"));
-
-            void A() { }
-            void B() { }
-            void C() { }
-            void D() { }
-
-
-
-
+            TestPauseResumeStart();
         }
+
+        void Update()
+        {
+            TestPauseResumeUpdate();
+        }
+
 
         void TestHeapValidityWithSetStartTime()
         {
@@ -108,5 +70,77 @@ namespace Karianakis.Utilities
 
         }
 
+
+
+        //? TEST PAUSE RESUME SINVOKES
+        MyId testPauseId;
+        [Space(15)]
+        [Header("TEST PAUSE RESUME")]
+        [SerializeField] bool _changePauseStatus;
+        [SerializeField] bool _pauseStatus;
+
+        [SerializeField] bool _changeKillStatus;
+
+        [SerializeField] bool _changeEndStatus;
+
+
+        InvoBuilder _testPauseInvo;
+        void TestPauseResumeStart()
+        {
+            testPauseId = new MyId();
+            _testPauseInvo = Invo.Infinite(
+                () =>
+                {
+                    Debug.LogWarning($"FOR PAUSE time = {Time.time}");
+                    transform.position += Vector3.up * 0.1f;
+                }
+            , 0.5f);
+            _testPauseInvo.SetId(testPauseId)
+            .SetEndAction(() => Debug.LogError($"ENDED  time = {Time.time}"))
+            .SetDeathAction(() => Debug.LogError($"DIED  time = {Time.time}"));
+
+        }
+        void TestPauseResumeUpdate()
+        {
+            if (_changePauseStatus)
+            {
+                if (_pauseStatus)
+                {
+                    Debug.Log("attempt to pause");
+                    //InvoManager.PauseAll(testPauseId);
+                    _testPauseInvo.Pause();
+                }
+                else
+                {
+                    Debug.Log("attempt to resume");
+                    _testPauseInvo.Resume();
+                    //InvoManager.ResumeAll(testPauseId);
+                    Debug.LogError($"RESUME TIME = {Time.time} DELAY = {_testPauseInvo.GetDelay}");
+                }
+                _changePauseStatus = false;
+            }
+
+            if (_changeKillStatus)
+            {
+                if (_changeKillStatus)
+                {
+                    Debug.Log("attempt to kill");
+                    _testPauseInvo.Kill();
+                    //InvoManager.KillAll(testPauseId);
+                    _changeKillStatus = false;
+                }
+            }
+
+            if (_changeEndStatus)
+            {
+                if (_changeEndStatus)
+                {
+                    Debug.Log("attempt to end");
+                    _testPauseInvo.End();
+                    //InvoManager.EndAll(testPauseId);
+                    _changeEndStatus = false;
+                }
+            }
+        }
     }
 }

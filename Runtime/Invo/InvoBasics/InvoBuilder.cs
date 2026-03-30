@@ -15,7 +15,7 @@ namespace Karianakis.Utilities
         { _action = action; }
 
 
-        internal override void InvokeMe(InvoBase _me) => _action.Invoke();
+        internal override void InvokeMeBeforeProcessing(InvoBase _me) => _action.Invoke();
 
 
     }

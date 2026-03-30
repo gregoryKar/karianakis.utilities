@@ -15,12 +15,12 @@ namespace Karianakis.Utilities
         internal InvoGroup(float startDelay)
         : base(0, _infiniteRepeats, null)
         {
-            OvverideCurrentEndTime(startDelay);
+            OvverideEndTimeAndReorder(startDelay);
         }
         public static InvoGroup Create(float startDelay) => new InvoGroup(startDelay: startDelay);
 
 
-        internal override void InvokeMe(InvoBase _me)
+        internal override void InvokeMeBeforeProcessing(InvoBase _me)
         {
 
 
@@ -28,7 +28,7 @@ namespace Karianakis.Utilities
             if (_actions.Count != _delays.Count)
             {
                 Debug.LogError($"InvoGroup: actions and delays count mismatch {_actions.Count} actions and {_delays.Count} delays");
-                EndMe();
+                End();
                 return;
             }
 #endif
@@ -48,7 +48,7 @@ namespace Karianakis.Utilities
 
                 if (GetIterationIndex == _actions.Count - 1)
                 {
-                    EndMe();
+                    End();
                 }
 
             }
@@ -58,7 +58,7 @@ namespace Karianakis.Utilities
         public InvoGroup SetDelayArray(float[] delays)
         {
             _delays = new List<float>(delays);
-            OvverideCurrentEndTime(delays[0]);
+            OvverideEndTimeAndReorder(delays[0]);
             return this;
         }
 
@@ -78,27 +78,7 @@ namespace Karianakis.Utilities
             return this;
         }
 
-        public InvoGroup SetId(MyId id)
-        {
-            SetIdInternal(id);
-            return this;
-        }
-        public InvoGroup SetEndAction(Action endAction)
-        {
-            SetEndActionInternal(endAction);
-            return this;
-        }
-        public InvoGroup SetDeathAction(Action deathAction)
-        {
-            SetDeathActionInternal(deathAction);
-            return this;
-        }
-        public InvoGroup SetDeathOrEndAction(Action deathAction)
-        {
-            SetDeathActionInternal(deathAction);
-            SetEndActionInternal(deathAction);
-            return this;
-        }
+     
 
 
     }

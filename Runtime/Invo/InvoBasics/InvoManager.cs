@@ -29,31 +29,71 @@ namespace Karianakis.Utilities
             }
         }
 
+
         private List<InvoBase> _invokes = new();
 
 
-        void Update()
+        //? MASTERUPDATE ------------------------ ------------------------- ----
+        void Update()//?
         {
 
+            if (_invokes.Count == 0) return;
+
+            List<InvoBase> _toEvoke = new();
 
             while (_invokes.Count > 0)
             {
                 var invo = _invokes[0];
-                if (MyTime.mommentPassed(invo.GetEnd) == false) break;
-
-                RemoveFirst();
-
-                if (invo.GetKillMe == false)
+                if (MyTime.mommentPassed(invo.GetEnd) == false)
                 {
-                    invo.InvokeMe(invo);
-                    invo.Process();
+                    break;
+                }
+                _toEvoke.Add(invo);
+                RemoveFirst();
+            }
 
-                    if (invo.GetKillMe == false)
+            for (int i = 0; i < _toEvoke.Count; i++)
+            {
+                var invo = _toEvoke[i];
+
+                if (invo.GetScheduledToDie)
+                {
+                    invo.MarkAsDead();
+                    invo.TriggerDeathAction();
+
+                }
+                else if (invo.GetScheduledToEnd)
+                {
+                    invo.MarkAsDead();
+                    invo.TriggerEndAction();
+                }
+                else if (invo.GetScheduledToPause)
+                {
+                    invo.ResetScheduledToPauseResume();
+                    invo.SetPaused(true);
+                    invo.SetEndTime(InvoBase._defaultPausedTime);
+                    AddItemSorted(invo);
+                }
+                else if (invo.GetScheduledToResume)
+                {
+                    invo.ResetScheduledToPauseResume();
+                    invo.SetPaused(false);
+                    invo.SetEndFromSavedEndFromNow();
+                    AddItemSorted(invo);
+                }
+                else //? MAIN CASE
+                {
+                    invo.InvokeMeBeforeProcessing(invo);
+                    invo.ProcessAfterInvocation();
+
+                    if (invo.GetCompleted == false)
                     {
                         AddItemSorted(invo);
                     }
+                   
                 }
             }
+
 
 #if UNITY_EDITOR && KARIANAKIS
 
@@ -74,6 +114,7 @@ namespace Karianakis.Utilities
         }
 
 
+
 #if UNITY_EDITOR && KARIANAKIS
         bool _displayedImTestingLog;
         float _editHeapTestTimer;
@@ -88,10 +129,11 @@ namespace Karianakis.Utilities
             _invokes.Add(thisOne);
             HeapifyUp(_invokes.Count - 1);
         }
-
-        void RemoveItem(InvoBase thisOne)
+        void RemoveItemAndSort(InvoBase thisOne, out bool found)
         {
             int index = _invokes.IndexOf(thisOne);
+            found = index != -1;
+
             if (index == -1) return;
 
             if (index == _invokes.Count - 1)
@@ -129,7 +171,6 @@ namespace Karianakis.Utilities
             HeapifyDown(0);
 
         }
-
         void HeapifyUp(int index)
         {
             while (index > 0)
@@ -142,7 +183,6 @@ namespace Karianakis.Utilities
                 index = parentIndex;
             }
         }
-
         void HeapifyDown(int index)
         {
             int count = _invokes.Count;
@@ -165,33 +205,12 @@ namespace Karianakis.Utilities
                 index = smallest;
             }
         }
-
         void SwapPositions(int i, int j)
         {
             var temp = _invokes[i];
             _invokes[i] = _invokes[j];
             _invokes[j] = temp;
         }
-
-
-
-
-        void PrintNearIndex(int index, int distanceMax)
-        {
-            int start = Mathf.Max(0, index - distanceMax);
-            int end = Mathf.Min(_invokes.Count - 1, index + distanceMax);
-
-            for (int i = start; i <= end; i++)
-            {
-                if (i == index)
-                {
-                    Debug.LogError("INDEX START POINT");
-                }
-
-                Debug.Log($"Index {i}: {_invokes[i].GetEnd}");
-            }
-        }
-
         void ReorderItemLocal(InvoBase thisOne)
         {
             int index = _invokes.IndexOf(thisOne);
@@ -208,6 +227,24 @@ namespace Karianakis.Utilities
         }
 
 
+
+
+        //? DEBUG - EDIT
+        void PrintNearIndex(int index, int distanceMax)
+        {
+            int start = Mathf.Max(0, index - distanceMax);
+            int end = Mathf.Min(_invokes.Count - 1, index + distanceMax);
+
+            for (int i = start; i <= end; i++)
+            {
+                if (i == index)
+                {
+                    Debug.LogError("INDEX START POINT");
+                }
+
+                Debug.Log($"Index {i}: {_invokes[i].GetEnd}");
+            }
+        }
         void TestHeapValidity()
         {
 
@@ -231,27 +268,18 @@ namespace Karianakis.Utilities
             }
         }
 
-        //? FUNCTIONS FOR EXPOSED METHODS
-        void KillAllLocal(MyId id)
-        {
-            if (id == null)
-            {
-                Debug.LogError(" KILL NULL ID ");
-                return;
-            }
-            foreach (var item in inst._invokes)
-            {
-                if (item.GetId == null) continue;
 
-                if (item.GetId.Equals(id))
-                {
-                    item.KillMe();
-                }
-            }
-        }
+        //? FUNCTIONS FOR EXPOSED METHODS
+
 
         bool LookIfIdExists(MyId id)
         {
+            if (id == null)
+            {
+                Debug.LogError("unity-utilities : (LookIfIdExists) CHECK NULL ID ");
+                return false;
+            }
+
             foreach (var item in inst._invokes)
             {
                 if (item.GetId == null) continue;
@@ -264,42 +292,101 @@ namespace Karianakis.Utilities
             return false;
         }
 
+        void RegisterToEndWithId(MyId id)
+        {
+            if (id == null)
+            {
+                Debug.LogError("unity-utilities : (RegisterToEndWithId) END NULL ID ");
+                return;
+            }
+
+            foreach (var item in inst._invokes)
+            {
+                if (item.GetId == null) continue;
+
+                if (item.GetId.Equals(id))
+                {
+                    item.End();
+                }
+            }
+        }
+
+        void RegisterToDieWithId(MyId id)
+        {
+            if (id == null)
+            {
+                Debug.LogError("unity-utilities : (RegisterToDieWithId) KILL NULL ID ");
+                return;
+            }
+
+            foreach (var item in inst._invokes)
+            {
+                if (item.GetId == null) continue;
+
+                if (item.GetId.Equals(id))
+                {
+                    item.Kill();
+                }
+            }
+        }
+
+
+        void RegisterToPauseWithId(MyId id, bool paused)
+        {
+            if (id == null)
+            {
+                Debug.LogError("unity-utilities : (RegisterToPauseWithId) PAUSE NULL ID ");
+                return;
+            }
+
+            foreach (var item in inst._invokes)
+            {
+                if (item.GetId == null) continue;
+
+                if (item.GetId.Equals(id))
+                {
+                    if (paused)
+                    {
+                        item.Pause();
+                    }
+                    else
+                    {
+                        item.Resume();
+                    }
+                }
+            }
+        }
 
 
 
-        //? EXPOSED INTRENAL
+        //? EXPOSED INTERNAL
         internal static void Add(InvoBase thisOne)
             => inst.AddItemSorted(thisOne);
         internal static void ReorderItem(InvoBase thisOne)
             => inst.ReorderItemLocal(thisOne);
 
 
+
+
+
         //? EXPOSED
+
+        public static void PauseAll(MyId id)
+           => inst.RegisterToPauseWithId(id, true);
+        public static void ResumeAll(MyId id)
+            => inst.RegisterToPauseWithId(id, false);
+
         public static void KillAll(MyId id)
-            => inst.KillAllLocal(id);
+            => inst.RegisterToDieWithId(id);
+
+        public static void EndAll(MyId id)
+       => inst.RegisterToEndWithId(id);
         public static bool Exists(MyId id)
             => inst.LookIfIdExists(id);
-            
-        public static void PauseAllWithCondition(Func<InvoBase, bool> condition)
-        {
-            foreach (var item in inst._invokes)
-            {
-                if (condition(item))
-                {
-                    item.Pause();
-                }
-            }
-        }
-        public static void UnpauseAllWithCondition(Func<InvoBase, bool> condition)
-        {
-            foreach (var item in inst._invokes)
-            {
-                if (condition(item))
-                {
-                    item.Unpause();
-                }
-            }
-        }
+
+
+
+
 
     }
 }

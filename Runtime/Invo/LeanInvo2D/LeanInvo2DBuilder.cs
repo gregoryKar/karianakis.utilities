@@ -21,7 +21,7 @@ namespace Karianakis.Utilities
         internal LeanInvo2DBuilder(Transform trans , bool local) : base(0, _infiniteRepeats, null) { _transform = trans; _local = local; }
 
 
-        internal override void InvokeMe(InvoBase _me)
+        internal override void InvokeMeBeforeProcessing(InvoBase _me)
         {
             float t = (MyTime.now - _startTime) / _duration;
 
@@ -64,7 +64,7 @@ namespace Karianakis.Utilities
 
             if (end)
             {
-                EndMe();
+                End();
             }
         }
 

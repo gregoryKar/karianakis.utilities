@@ -15,7 +15,7 @@ namespace Karianakis.Utilities
         internal invoAdvancedBuilder(Action<invoAdvancedBuilder> action, float delay, int repeatsLeft) : base(delay, repeatsLeft, null) => _action = action;
 
 
-        internal override void InvokeMe(InvoBase _me) => _action.Invoke((invoAdvancedBuilder)_me);
+        internal override void InvokeMeBeforeProcessing(InvoBase _me) => _action.Invoke((invoAdvancedBuilder)_me);
 
 
      

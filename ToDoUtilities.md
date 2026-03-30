@@ -1,7 +1,14 @@
 - TODO - PROBLEMS - THOUGHTS
 
 
+> 30/3 TEMP -------------- TEMP ---------------
 
-- add SetEndOrDieAction .. any case when this is done DO
-sets both
 
+
+- pause 
+- kill 
+- end
+    θελεις να μην ξανακανει..
+
+
+- get paused status to know if it is paused or now !! 
