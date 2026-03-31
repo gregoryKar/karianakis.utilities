@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 namespace Karianakis.Utilities
 {
@@ -36,6 +37,15 @@ namespace Karianakis.Utilities
             Initialize(node);
             Active.Add(node);
             return node;
+        }
+        public T GetSigned(string theName)
+        {
+            T node = Get();
+            if (node is MonoBehaviour mono)
+            {
+                mono.name = theName;
+            }
+            return node;    
         }
 
         public void Remove(T node)
