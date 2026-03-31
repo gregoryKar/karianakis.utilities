@@ -113,7 +113,7 @@ namespace Karianakis.Utilities
         {
             _end = MyTime.now + _savedDelay;
         }
-        
+
 
 
         /// <summary>
@@ -156,12 +156,15 @@ namespace Karianakis.Utilities
         {
             if (_DEAD)
             {
+#if PACKAGE_EDITOR
                 Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT PAUSE - DEAD DEAD DEAD");
-                return;
+#endif
             }
             else if (_isPaused)
             {
+#if PACKAGE_EDITOR
                 Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT PAUSE - INVO ALREADY PAUSED");
+#endif
             }
             else
             {
@@ -176,13 +179,15 @@ namespace Karianakis.Utilities
         {
             if (_DEAD)
             {
+#if PACKAGE_EDITOR
                 Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT RESUME - DEAD DEAD DEAD");
-                return;
+#endif
             }
             else if (_isPaused == false)
             {
+#if PACKAGE_EDITOR
                 Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT RESUME - INVO NOT PAUSED");
-                return;
+#endif
             }
             else
             {
@@ -196,13 +201,16 @@ namespace Karianakis.Utilities
         {
             if (_DEAD)
             {
+
+#if PACKAGE_EDITOR
                 Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT KILL - DEAD DEAD DEAD");
-                return;
+#endif
             }
             else if (_shceduledToDie == true)
             {
+#if PACKAGE_EDITOR
                 Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT KILL - INVO ALREADY KILLED");
-                return;
+#endif
             }
             else
             {
@@ -215,13 +223,15 @@ namespace Karianakis.Utilities
         {
             if (_DEAD)
             {
+#if PACKAGE_EDITOR  
                 Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT END - DEAD DEAD DEAD");
-                return;
+#endif
             }
             else if (_shceduledToEnd == true)
             {
+#if PACKAGE_EDITOR
                 Debug.LogError("unity-utilities : (INVOBASE) ATTEMPT END - INVO ALREADY ENDED");
-                return;
+#endif
             }
             else
             {
