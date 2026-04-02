@@ -5,7 +5,7 @@ namespace Karianakis.Utilities
 {
     public abstract class InvoBase : IComparable<InvoBase>
     {
-        MyId _id;
+        MyIdBase _id;
         float _delay;
         float _savedDelay;
         float _end;
@@ -61,7 +61,7 @@ namespace Karianakis.Utilities
         internal const float _defaultPausedTime = float.MaxValue;
         internal float GetEnd => _end;
         internal bool GetCompleted => _completed;
-        internal MyId GetId => _id;
+        internal MyIdBase GetId => _id;
 
         internal bool GetScheduledToPause => _shceduledToPause;
         internal bool GetScheduledToResume => _shceduledToResume;
@@ -78,7 +78,7 @@ namespace Karianakis.Utilities
             _shceduledToPause = false;
             _shceduledToResume = false;
         }
-        internal void SetIdInternal(MyId id)
+        internal void SetIdInternal(MyIdBase id)
                  => _id = id;
         internal void SetEndActionInternal(Action endAction)
             => _endAction = endAction;
@@ -264,7 +264,7 @@ namespace Karianakis.Utilities
             OvverideEndTimeAndReorder(startDelay);
             return this;
         }
-        public InvoBase SetId(MyId id)
+        public InvoBase SetId(MyIdBase id)
         {
             SetIdInternal(id);
             return this;

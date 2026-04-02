@@ -270,7 +270,7 @@ namespace Karianakis.Utilities
 
 
         //? LOCAL FUNCTIONS FOR EXPOSED METHODS
-        bool LookIfIdExists(MyId id)
+        bool LookIfIdExists(MyIdBase id)
         {
             if (id == null)
             {
@@ -289,7 +289,7 @@ namespace Karianakis.Utilities
             }
             return false;
         }
-        void RegisterToEndWithId(MyId id)
+        void RegisterToEndWithId(MyIdBase id)
         {
             if (id == null)
             {
@@ -308,7 +308,7 @@ namespace Karianakis.Utilities
                 }
             }
         }
-        void RegisterToDieWithId(MyId id)
+        void RegisterToDieWithId(MyIdBase id)
         {
             if (id == null)
             {
@@ -327,7 +327,7 @@ namespace Karianakis.Utilities
                 }
             }
         }
-        void RegisterToPauseWithId(MyId id, bool paused)
+        void RegisterToPauseWithId(MyIdBase id, bool paused)
         {
             if (id == null)
             {
@@ -376,17 +376,17 @@ namespace Karianakis.Utilities
 
 
         //? EXPOSED
-        public static void PauseAll(MyId id)
+        public static void PauseAll(MyIdBase id)
            => inst.RegisterToPauseWithId(id, true);
-        public static void ResumeAll(MyId id)
+        public static void ResumeAll(MyIdBase id)
             => inst.RegisterToPauseWithId(id, false);
 
-        public static void KillAll(MyId id)
+        public static void KillAll(MyIdBase id)
             => inst.RegisterToDieWithId(id);
 
-        public static void EndAll(MyId id)
+        public static void EndAll(MyIdBase id)
        => inst.RegisterToEndWithId(id);
-        public static bool Exists(MyId id)
+        public static bool Exists(MyIdBase id)
             => inst.LookIfIdExists(id);
 
         public static void ClearAllNoKillOrEndInvocations()
