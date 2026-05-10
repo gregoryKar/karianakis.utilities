@@ -8,23 +8,7 @@ namespace Karianakis.Utilities
         Transform _parent;
 
       
-        public T GetSigned(string theName, MyIdBase id)
-        {
-            T node = Get();
-            if (node is I_HaveIdExtended signable)
-            {
-                signable.SetId(id);
-            }
-            else
-            {
-                Debug.LogError($"KarianakisUnityPool: {typeof(T).Name} does not implement I_HaveIdExtended, cannot sign");
-            }
-            AssignName(node, theName);
-            return node;
-        }
-
-      
-
+        
         protected override void OnIntantiate(T item)
         {
             if (_parent != null)

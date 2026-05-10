@@ -31,7 +31,7 @@ namespace Karianakis.Utilities
 
 
 
-        protected T Get()
+        internal T GetRaw()
         {
             T node;
             int size = _inactive.Count;
@@ -49,7 +49,16 @@ namespace Karianakis.Utilities
             _active.Add(node);
             return node;
         }
-
+        internal T Get(string theName, MyIdBase id)
+        {
+            T node = GetRaw();
+            AssignName(node, theName);
+            if(node is I_HaveIdExtended signable)
+            {
+                signable.SetId(id);
+            }
+            return node;
+        }
 
 
 
@@ -96,23 +105,38 @@ namespace Karianakis.Utilities
             //typeof(T) is not I_HaveId
             if (typeof(I_HaveId).IsAssignableFrom(typeof(T)) == false)
             {
-                EngineConnector.Error($"KarianakisPool : Attempted to remove items with id, but type {typeof(T)} does not implement I_HaveId");
                 return;
             }
+
+            if (id == null)
+            {
+                EngineConnector.Error($"KarianakisPool : Attempted to remove items with id, but given id was null. Type: {typeof(T)}");
+                return;
+            }
+
 
             var array = _active.ToArray();
             for (int i = 0; i < array.Length; i++)
             {
+
                 T item = array[i];
                 if (item is I_HaveId hasId)
                 {
-                    if (hasId.GetId().Equals(id))
+                    if (hasId.GetId() != null)
                     {
-                        Remove(item);
+
+                        if (hasId.GetId().Equals(id))
+                        {
+                            Remove(item);
+                        }
                     }
                 }
+
+
             }
         }
+
+
     }
 }
 
