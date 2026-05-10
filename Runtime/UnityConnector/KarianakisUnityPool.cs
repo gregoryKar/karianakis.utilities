@@ -7,12 +7,7 @@ namespace Karianakis.Utilities
 
         Transform _parent;
 
-        public T Get(string theName)
-        {
-            T node = Get();
-            AssignName(node, theName);
-            return node;
-        }
+      
         public T GetSigned(string theName, MyIdBase id)
         {
             T node = Get();
