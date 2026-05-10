@@ -13,6 +13,7 @@ namespace Karianakis.Utilities
 
         protected bool _pausedLocalForbidden = false;
 
+
         public void SetPaused(bool paused)
         {
             if (paused == _pausedLocalForbidden)
@@ -27,6 +28,13 @@ namespace Karianakis.Utilities
 
         }
         public virtual bool GetIsPaused => _pausedLocalForbidden;
+
+        bool _haveLinkedItems = false;
+        internal bool HaveLinkedItems => _haveLinkedItems;
+        internal void NotifyHaveLinkedItems()
+            => _haveLinkedItems = true;
+        internal void NotifyClearedLinkedItems()
+        => _haveLinkedItems = false;
 
 
 

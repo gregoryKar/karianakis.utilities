@@ -14,6 +14,7 @@ namespace Karianakis.Utilities
             var connector = go.AddComponent<UnityUtilitiesConnector>();
             new EngineConnector(connector);
             connector._manager = new InvoManager();
+            new IdLinkManager();//! NEW
         }
 
 
