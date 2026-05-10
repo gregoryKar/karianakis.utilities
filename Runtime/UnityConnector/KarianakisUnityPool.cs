@@ -1,7 +1,7 @@
 using UnityEngine;
 namespace Karianakis.Utilities
 {
-    public class KarianakisUnityPool<T> : KarianakisPool<T> where T : Transform
+    public class KarianakisUnityPool<T> : KarianakisPool<T> where T : Component
     {
         public KarianakisUnityPool(Transform parent, string preffix) : base(parent, preffix) { _parent = parent; }
 
