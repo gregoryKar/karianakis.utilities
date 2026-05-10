@@ -50,7 +50,7 @@ namespace Karianakis.Utilities
             return node;
         }
 
-       
+
 
 
 
@@ -81,11 +81,8 @@ namespace Karianakis.Utilities
                 Remove(array[i]);
             }
         }
-        public T[] GetAllActiveItems()
-        {
-            var array = _active.ToArray();
-            return array;
-        }
+        public T[] GetAllActiveItems() => _active.ToArray();
+
 
 
 
@@ -94,6 +91,28 @@ namespace Karianakis.Utilities
         protected virtual void AssignName(T item, string givenName) { }
         protected virtual void OnDeactivate(T item) { }
 
+        public void RemoveAllActiveItemsWithId(MyIdBase id)
+        {
+            //typeof(T) is not I_HaveId
+            if (typeof(I_HaveId).IsAssignableFrom(typeof(T)) == false)
+            {
+                EngineConnector.Error($"KarianakisPool : Attempted to remove items with id, but type {typeof(T)} does not implement I_HaveId");
+                return;
+            }
+
+            var array = _active.ToArray();
+            for (int i = 0; i < array.Length; i++)
+            {
+                T item = array[i];
+                if (item is I_HaveId hasId)
+                {
+                    if (hasId.GetId().Equals(id))
+                    {
+                        Remove(item);
+                    }
+                }
+            }
+        }
     }
 }
 
