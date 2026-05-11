@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 namespace Karianakis.Utilities
 {
-    public class KarianakisPool<T> : I_Pool
+    public class KarianakisPool<T> : I_PoolMaster
     {
 
         public KarianakisPool(object parent, string preffix)
@@ -136,7 +136,15 @@ namespace Karianakis.Utilities
             }
         }
 
+        public T1 Get<T1>()
+        {
+            throw new NotImplementedException();
+        }
 
+        public void Remove<T1>(T1 item)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 
