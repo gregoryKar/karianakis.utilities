@@ -3,12 +3,11 @@ namespace Karianakis.Utilities
 {
     public class KarianakisUnityPool<T> : KarianakisPool<T> where T : Component, I_UnityPool
     {
-        public KarianakisUnityPool(Transform parent, string preffix) : base(parent, preffix) { _parent = parent; }
-
+     
         Transform _parent;
-        public void SetParent(Transform parent)
+        public override void SetParent(object parent)
         {
-            _parent = parent;
+            _parent = parent as Transform;
         }
 
 

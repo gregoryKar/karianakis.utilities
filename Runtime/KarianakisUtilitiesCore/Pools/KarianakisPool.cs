@@ -6,12 +6,17 @@ namespace Karianakis.Utilities
     public class KarianakisPool<T> : I_SpecificPool<T>
     {
 
-        public KarianakisPool(object parent, string preffix)
+        public KarianakisPool()
         {
-            _preffix = preffix;
+            _preffix = typeof(T).Name;
         }
 
         protected string _preffix;
+        public void SetPreffix(string preffix)
+        {
+            _preffix = preffix;
+        }
+        public virtual void SetParent(object parent) { }
 
 
 
@@ -53,7 +58,7 @@ namespace Karianakis.Utilities
         {
             T node = Get();
             AssignName(node, theName);
-            if(node is I_HaveIdExtended signable)
+            if (node is I_HaveIdExtended signable)
             {
                 signable.SetId(id);
             }
@@ -136,10 +141,10 @@ namespace Karianakis.Utilities
             }
         }
 
-       
-      
 
-      
+
+
+
     }
 }
 
