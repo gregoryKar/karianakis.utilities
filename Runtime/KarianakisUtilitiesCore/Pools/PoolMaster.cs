@@ -16,8 +16,10 @@ namespace Karianakis.Utilities
             {
                 _pools.Add(pool);
                 _poolsDictionary[typeof(T)] = pool;
+                OnRegisterPool<T>(pool);
             }
         }
+        protected virtual void OnRegisterPool<T>(I_Pool pool) { }
 
         Dictionary<Type, I_Pool> _poolsDictionary = new();
         public T GetSigned<T>(string theName, MyIdBase id)
