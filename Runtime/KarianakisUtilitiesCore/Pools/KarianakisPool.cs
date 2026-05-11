@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 namespace Karianakis.Utilities
 {
-    public class KarianakisPool<T> : I_PoolMaster
+    public class KarianakisPool<T> : I_SpecificPool<T>
     {
 
         public KarianakisPool(object parent, string preffix)
@@ -31,7 +31,7 @@ namespace Karianakis.Utilities
 
 
 
-        internal T GetRaw()
+        public T Get()
         {
             T node;
             int size = _inactive.Count;
@@ -49,9 +49,9 @@ namespace Karianakis.Utilities
             _active.Add(node);
             return node;
         }
-        internal T Get(string theName, MyIdBase id)
+        public T GetSigned(string theName, MyIdBase id)
         {
-            T node = GetRaw();
+            T node = Get();
             AssignName(node, theName);
             if(node is I_HaveIdExtended signable)
             {
@@ -136,15 +136,10 @@ namespace Karianakis.Utilities
             }
         }
 
-        public T1 Get<T1>()
-        {
-            throw new NotImplementedException();
-        }
+       
+      
 
-        public void Remove<T1>(T1 item)
-        {
-            throw new NotImplementedException();
-        }
+      
     }
 }
 
