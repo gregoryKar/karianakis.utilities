@@ -6,11 +6,11 @@ namespace Karianakis.Utilities
 
         protected override void OnRegisterPool<T>(I_Pool pool)
         {
-            if (pool is I_UnityPool unityPool)
+            if (pool is KarianakisPool<T> karianakisPool)
             {
                 var go = new GameObject($"Pool_{typeof(T).Name}");
                 go.transform.SetParent(GetPoolsMainFather());
-                unityPool.SetParent(go.transform);
+                karianakisPool.SetParent(go.transform);
             }
         }
         protected abstract Transform GetPoolsMainFather();

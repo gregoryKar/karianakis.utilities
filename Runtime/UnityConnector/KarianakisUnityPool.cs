@@ -1,16 +1,15 @@
 using UnityEngine;
 namespace Karianakis.Utilities
 {
-    public class KarianakisUnityPool<T> : KarianakisPool<T> where T : Component, I_UnityPool
+    public class KarianakisUnityPool<T> : KarianakisPool<T> where T : Component
     {
-     
+
         Transform _parent;
         public override void SetParent(object parent)
         {
             _parent = parent as Transform;
         }
-
-
+      
         protected override void OnIntantiate(T item)
         {
             if (_parent != null)
@@ -33,6 +32,7 @@ namespace Karianakis.Utilities
             }
             item.name += "_OFF";
         }
+
 
     }
 
