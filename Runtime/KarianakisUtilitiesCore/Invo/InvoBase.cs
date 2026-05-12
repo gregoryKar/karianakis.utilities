@@ -145,6 +145,8 @@ namespace Karianakis.Utilities
         public int GetRepeatsLeft => _repeatsMax - _iterationIndex - 1;
         public float GetDelay => _delay;
         public bool GetCanceledOrCompleted => _canceled || _finished;
+        public float GetSavedTime => _savedDelay;
+        public float GetEndTime => _end;
 
 
         internal void SetIdInternal(MyIdBase id)
