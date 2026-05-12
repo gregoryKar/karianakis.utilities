@@ -5,6 +5,8 @@ namespace Karianakis.Utilities
     public class MyChildId : MyIdBase
     {
 
+        //! CHILD == FATHER FALSE
+        //! FATHER == CHILD TRUE
         MyId _childId;
         MyId _fatherId;
         public MyChildId(MyId father)
@@ -16,7 +18,7 @@ namespace Karianakis.Utilities
         internal MyId GetChildId => _childId;
         internal MyId GetParentId => _fatherId;
 
-        public override bool GetIsPaused => _pausedLocalForbidden || _fatherId.GetIsPaused;
+        public override bool GetIsPaused => base.GetIsPaused || _fatherId.GetIsPaused;
 
         /// <summary>
         /// kills ONLY THE CHILD the father needs to be killed separately
@@ -31,10 +33,6 @@ namespace Karianakis.Utilities
         protected override bool OverlapsInternal(MyIdBase other)
         {
             if (other.ContainsIntId(_childId._id))
-            {
-                return true;
-            }
-            else if (other.ContainsIntId(_fatherId._id))
             {
                 return true;
             }
