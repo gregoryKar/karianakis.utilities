@@ -38,22 +38,48 @@ namespace Karianakis.Utilities
 
 
 
+
+        static bool MainNonNullIdEqualityFunction(MyIdBase thisId, MyIdBase otherId)
+        {
+            //ReferenceEquals(thisId, otherId))
+            return thisId.OverlapsInternal(otherId);
+        }
+
+        internal static bool MainIdEqualityFunction(MyIdBase thisId, MyIdBase otherId)
+        {
+
+            if (ReferenceEquals(thisId, null) || ReferenceEquals(otherId, null))
+            {
+                if (ReferenceEquals(thisId, null) && ReferenceEquals(otherId, null))
+                {
+                    return true;
+                }
+                else return false;
+            }
+            else
+            {
+                return MainNonNullIdEqualityFunction(thisId, otherId);
+            }
+        }
+
+
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(this, obj)) return true;
             if (obj is MyIdBase other)
-                return Overlaps(other);
-            return false;
+            {
+                return MainIdEqualityFunction(this, other);
+            }
+            else
+            {
+                return false;
+            }
         }
         public override int GetHashCode() => base.GetHashCode();
 
 
         public static bool operator ==(MyIdBase left, MyIdBase right)
         {
-            //without this check if both are null it would return false instead of true
-            if (ReferenceEquals(left, right)) return true;
-            if (left is null || right is null) return false;
-            return left.Overlaps(right);
+            return MainIdEqualityFunction(left, right);
         }
 
         public static bool operator !=(MyIdBase left, MyIdBase right)
@@ -74,10 +100,6 @@ namespace Karianakis.Utilities
 
         public bool StrictReferenceEquals(MyIdBase otherId)
         {
-            if (otherId == null)
-            {
-                return false;
-            }
             return ReferenceEquals(this, otherId);
         }
     }

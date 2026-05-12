@@ -327,7 +327,7 @@ namespace Karianakis.Utilities
             {
                 if (item.GetId == null) continue;
 
-                if (item.GetId.Equals(id))
+                if (MyIdBase.MainIdEqualityFunction(id, item.GetId))
                 {
                     if (item.GetCanceled == false)
                     {
@@ -351,7 +351,7 @@ namespace Karianakis.Utilities
             {
                 if (item.GetId == null) continue;
 
-                if (item.GetId.Equals(id))
+                if (MyIdBase.MainIdEqualityFunction(id, item.GetId))
                 {
                     toForceFinish.Add(item);
                 }
@@ -377,7 +377,7 @@ namespace Karianakis.Utilities
             {
                 if (item.GetId == null) continue;
 
-                if (item.GetId.Equals(id))
+                if (MyIdBase.MainIdEqualityFunction(id, item.GetId))
                 {
                     toCancel.Add(item);
                 }
@@ -399,7 +399,7 @@ namespace Karianakis.Utilities
             {
                 if (item.GetId == null) continue;
 
-                if (item.GetId.Equals(id))
+                if (MyIdBase.MainIdEqualityFunction(id, item.GetId))
                 {
                     toRefresh.Add(item);
 

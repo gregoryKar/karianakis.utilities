@@ -105,18 +105,14 @@ namespace Karianakis.Utilities
                     else
                     {
                         SetEndFromSavedEndFromNow();
-                        OvverideEndTimeAndReorder(-1f);
+                        InvoManager.ReorderItem(this);
                     }
                 }
-
-
             }
-
-
-
-
-
         }
+
+
+
 
         internal void RefreshPauseFromId()
             => Paused = Id.GetIsPaused;
@@ -180,7 +176,7 @@ namespace Karianakis.Utilities
         }
         internal void SaveEndDifferenceFromNow()
         {
-            _savedDelay = MyTime.GetNow - _end;
+            _savedDelay = _end - MyTime.GetNow;
         }
         internal void SetEndFromSavedEndFromNow()
         {
