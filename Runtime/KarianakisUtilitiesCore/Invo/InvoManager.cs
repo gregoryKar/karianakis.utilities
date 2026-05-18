@@ -159,15 +159,26 @@ namespace Karianakis.Utilities
             {
                 int left = i * 2 + 1;
                 int right = i * 2 + 2;
+                bool haveLeft = left < _invokes.Count;
+                bool haveRight = right < _invokes.Count;
 
-                if (left < _invokes.Count && _invokes[left].CompareTo(_invokes[i]) < 0)
+                if (haveLeft && _invokes[left].GetCanceledOrCompleted)
+                {
+                    continue;
+                }
+                if (haveRight && _invokes[right].GetCanceledOrCompleted)
+                {
+                    continue;
+                }
+
+                if (haveLeft && _invokes[left].CompareTo(_invokes[i]) < 0)
                 {
 
                     EngineConnector.Error($"Heap property violated at index {i} with left child {left}");
                     PrintNearIndex(i, 10);
                 }
 
-                if (right < _invokes.Count && _invokes[right].CompareTo(_invokes[i]) < 0)
+                if (haveRight && _invokes[right].CompareTo(_invokes[i]) < 0)
                 {
                     EngineConnector.Error($"Heap property violated at index {i} with right child {right}");
                     PrintNearIndex(i, 10);
